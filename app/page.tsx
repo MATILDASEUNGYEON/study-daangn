@@ -1,65 +1,114 @@
-import Image from "next/image";
+'use client'
+
+import { ChevronDownIcon } from '@heroicons/react/16/solid'
+import { useRouter } from 'next/navigation'
+
+
 
 export default function Home() {
+  const router = useRouter();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className='flex justify-center flex-col items-center gap-6 mt-20'>
+      <div className="p-6">
+        <h1 className="text-3xl font-bold">OO에서 OO 찾고 계신가요?</h1>
+      </div>
+
+      <div className="flex items-center gap-3 pb-10">
+
+        <div className="relative flex items-start self-start bg-black text-white rounded-full px-4 py-2 cursor-pointer h-12">
+          
+          <img src="/utils/locationIcon.png" alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
+          <select
+            className="appearance-none bg-transparent pr-6 pl-1 self-center text-white text-sm focus:outline-none relative z-10"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            <option className='text-black'>가산동</option>
+            <option className='text-black'>독산동</option>
+            <option className='text-black'>신림동</option>
+          </select>
+
+          <ChevronDownIcon
+            aria-hidden="true"
+            className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-4 text-gray-200"
+          />
+        </div>
+        <div className="flow-root">
+          <div className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-2 w-[600px] h-12">
+
+            <div className="relative min-w-[90px] pointer-events-auto">
+              <select
+                className="appearance-none bg-transparent pr-6 pl-1 text-gray-700 text-sm focus:outline-none relative z-10"
+              >
+                <option>중고거래</option>
+                <option>알바</option>
+                <option>동네생활</option>
+              </select>
+
+              <ChevronDownIcon
+                aria-hidden="true"
+                className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-4 text-gray-600"
+              />
+            </div>
+            <div className="h-5 w-px bg-gray-300 mx-3"></div>
+
+            <input
+              type="text"
+              placeholder="Search"
+              className="flex-grow bg-transparent focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <button className="btn btn-circle text-white">
+              
+              <img src="/utils/searchIcon.png" alt="searchIcon" width={30} height={30} className="object-contain"/>
+            </button>
+          </div>
+
+          <div className='flex text-sm text-gray-500 mt-1 gap-2'>
+            <p>인기 검색어</p>
+            <div className="h-5 w-px bg-gray-300 mx-3"></div>
+            <p>에어컨</p>
+            <p>에어컨 청소</p>
+            <p>노트북</p>
+            <p>원룸</p>
+            <p>현대 중고차</p>
+            <p>근처 맛집</p>
+            <p>근처 맛집</p>
+            <p>근처 맛집</p>
+          </div>
         </div>
-      </main>
+
+      </div>
+
+      <div className='flex gap-4 pb-20'>
+        <div 
+          className='w-30 h-25 bg-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow'
+          onClick={() => router.push('/used')}
+        >
+          <img src="/utils/itemsIcon.png" alt="itemsIcon" width={60} height={60} className="object-contain p-4"/>
+          <div className='px-4 pb-4'>
+            <h2 className='font-bold text-lg'>중고거래</h2>
+          </div>
+        </div>
+        <div 
+          className='w-30 h-25 bg-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow'
+          onClick={() => router.push('/jobs')}
+        >
+          <img src="/utils/storageIcon.png" alt="storageIcon" width={63} height={63} className="object-contain p-4"/>
+          <div className='px-4 pb-4'>
+            <h2 className='font-bold text-lg'>알바</h2>
+          </div>
+        </div>
+        <div 
+          className='w-30 h-25 bg-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow'
+          onClick={() => router.push('/life')}
+        >
+          <img src="/utils/lifeIcon.png" alt="lifeIcon" width={60} height={60} className="object-contain p-4"/>
+          <div className='px-4 pb-4'>
+            <h2 className='font-bold text-lg'>동네생활</h2>
+          </div>
+        </div>
+      </div>
+
     </div>
+    
   );
 }
