@@ -1,8 +1,7 @@
-import * as React from "react";
-import Image, { StaticImageData } from "next/image";
+import React from "react";
 
 interface CardProps {
-  image: StaticImageData | string;
+  image: string;
   title: string;
   price: string | number;
   onClick?: () => void;
@@ -17,13 +16,8 @@ export function Card({ image, title, price, onClick, className = "" }: CardProps
       className={`border border-gray-200 rounded-md p-3 cursor-pointer hover:shadow-lg transition-shadow ${className}`}
       onClick={onClick}
     >
-      <Image 
-        src={image} 
-        alt={title} 
-        width={240}
-        height={240}
-        className="w-full h-60 object-cover rounded-t-md"
-      />
+      <img src={image} alt={title} className="w-full h-60 object-cover rounded-t-md"/>
+      
       <div className="p-3">
         <p className="text-base font-medium text-gray-900 truncate">{title}</p>
         <p className="text-lg font-bold text-gray-900 mt-1">{formattedPrice}</p>

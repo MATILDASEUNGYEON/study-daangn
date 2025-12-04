@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import { Button } from "@/components/ui/button";
-
+import {Select} from "@/components/ui/select";
 
 export default function LifePage(){
     return(
@@ -9,7 +9,7 @@ export default function LifePage(){
             <div className="flex w-full items-center gap-8 pb-10 justify-center">
 
                 <div className="relative flex items-start self-start bg-black text-white rounded-full px-4 py-2 cursor-pointer h-12">
-                    <img src="/utils/locationIcon.png" alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
+                    <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/locationIcon.png`} alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
                     <select
                         className="appearance-none bg-transparent pr-6 pl-1 self-center text-white text-sm focus:outline-none relative z-10"
                     >
@@ -27,18 +27,7 @@ export default function LifePage(){
                     <div className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-2 w-[900px] h-12">
 
                         <div className="relative min-w-[90px] pointer-events-auto">
-                            <select
-                                className="appearance-none bg-transparent pr-6 pl-1 text-gray-700 text-sm focus:outline-none relative z-10"
-                            >
-                                <option>알바</option>
-                                <option>중고거래</option>
-                                <option>동네생활</option>
-                            </select>
-
-                            <ChevronDownIcon
-                                aria-hidden="true"
-                                className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-4 text-gray-600"
-                            />
+                            <Select options={['중고거래','알바','동네생활']}/>
                         </div>
                         <div className="h-5 w-px bg-gray-300 mx-3"></div>
 
@@ -48,7 +37,7 @@ export default function LifePage(){
                         className="flex-grow bg-transparent focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
                         />
                         <button className="btn btn-circle text-white">
-                            <img src="/utils/searchIcon.png" alt="Search Icon" width={30} height={30}/>
+                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/searchIcon.png`} alt="Search Icon" width={30} height={30}/>
                         </button>
                     </div>
 
@@ -72,7 +61,7 @@ export default function LifePage(){
                     <p className="text-2xl font-bold">OOO시 OOO구 OOO동 동네생활</p>
                     <Button type="button" className="bg-amber-500 hover:bg-amber-600 ml-auto">
                         <div className= "flex">
-                            <img src="/utils/plusIcon.png" alt="plusIcon" className='size-5 mr-2'/>
+                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/plusIcon.png`} alt="plusIcon" className='size-5 mr-2'/>
                             <p className="text-white">글쓰기</p>
                         </div>
                     </Button>
@@ -111,17 +100,17 @@ export default function LifePage(){
                                 </div>
                                 <div className="flex pt-3">
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src="/utils/likeIcon.png" alt="likeIcon" className='size-4'/>
+                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/likeIcon.png`} alt="likeIcon" className='size-4'/>
                                         <p className="text-s text-gray-400">0</p>   
                                     </div>
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src="/utils/commentIcon.png" alt="commentIcon" className='size-4'/>
+                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/commentIcon.png`} alt="commentIcon" className='size-4'/>
                                         <p className="text-s text-gray-400">0</p>
                                     </div>
                                 </div>
                             </div>
                             <div className="w-1/5 flex justify-center">
-                                <img src="/utils/sampleImage.png" alt="sampleImage" className="size-40 object-cover m-3"/>
+                                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} alt="sampleImage" className="size-40 object-cover m-3"/>
                             </div>
                         </div>
                         <div className="flex w-full border border-gray-300 rounded-md p-4 mb-5 ml-auto">
@@ -135,17 +124,17 @@ export default function LifePage(){
                                 </div>
                                 <div className="flex pt-3">
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src="/utils/likeIcon.png" alt="likeIcon" className='size-4'/>
+                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/likeIcon.png`} alt="likeIcon" className='size-4'/>
                                         <p className="text-s text-gray-400">0</p>   
                                     </div>
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src="/utils/commentIcon.png" alt="commentIcon" className='size-4'/>
+                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/commentIcon.png`} alt="commentIcon" className='size-4'/>
                                         <p className="text-s text-gray-400">0</p>
                                     </div>
                                 </div>
                             </div>
                             <div className="w-1/5 flex justify-center">
-                                <img src="/utils/sampleImage.png" alt="sampleImage" className="size-40 object-cover m-3"/>
+                                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} alt="sampleImage" className="size-40 object-cover m-3"/>
                             </div>
                         </div>
                         <div className="flex w-full border border-gray-300 rounded-md p-4 mb-5 ml-auto">
@@ -159,24 +148,24 @@ export default function LifePage(){
                                 </div>
                                 <div className="flex pt-3">
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src="/utils/likeIcon.png" alt="likeIcon" className='size-4'/>
+                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/likeIcon.png`} alt="likeIcon" className='size-4'/>
                                         <p className="text-s text-gray-400">0</p>   
                                     </div>
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src="/utils/commentIcon.png" alt="commentIcon" className='size-4'/>
+                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/commentIcon.png`} alt="commentIcon" className='size-4'/>
                                         <p className="text-s text-gray-400">0</p>
                                     </div>
                                 </div>
                             </div>
                             <div className="w-1/5 flex justify-center">
-                                <img src="/utils/sampleImage.png" alt="sampleImage" className="size-40 object-cover m-3"/>
+                                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} alt="sampleImage" className="size-40 object-cover m-3"/>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="w-full mt-10">
-                <img src="/utils/subfooter.png" alt="subfooter" className="w-full" />
+                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/subfooter.png`} alt="subfooter" className="w-full" />
             </div>
         </div>
     )

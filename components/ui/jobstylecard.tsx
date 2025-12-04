@@ -1,5 +1,4 @@
 import * as React from "react";
-import Image, { StaticImageData } from "next/image";
 import { Tag } from "./tags";
 
 interface JobStyleCardProps {
@@ -11,7 +10,7 @@ interface JobStyleCardProps {
     bgColor: string;
     textColor: string;
   }>;
-  image: StaticImageData | string;
+  image: string;
   onClick?: () => void;
   className?: string;
 }
@@ -50,13 +49,7 @@ export function JobStyleCard({
         </div>
       </div>
       <div className="w-1/5 flex justify-center">
-        <Image 
-          src={image} 
-          alt={title} 
-          width={160}
-          height={160}
-          className="size-40 object-cover m-3 rounded-md"
-        />
+        <img src={image} alt={title} className="size-40 object-cover m-3 rounded-md"/>
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ interface UsedFilterState {
     keyword: string;
 }
 const initialState: UsedFilterState = {
-    location: "가산동",
+    location: "",
     category: "중고거래",
     isTrade: false,
     itemCategory: "",
@@ -57,6 +57,8 @@ const UsedFilterSlice= createSlice({
         },
 
         resetFilter: (state) => {
+            state.location = "";
+            state.itemCategory = "";
             state.priceButton = null;
             state.minPrice = "";
             state.maxPrice = "";

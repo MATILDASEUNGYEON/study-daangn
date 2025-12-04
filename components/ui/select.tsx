@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 
 interface SelectProps {
@@ -13,12 +13,12 @@ interface SelectProps {
 
 export function Select({ value, onChange, options, placeholder, className = "" }: SelectProps) {
   return (
-    <div className={`inline-block border border-gray-300 rounded-md ${className}`}>
+    <div className={`inline-block rounded-md ${className}`}>
       <div className="relative">
         <select
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
-          className="appearance-none bg-transparent px-3 py-1 pr-8 text-sm text-black focus:outline-none cursor-pointer"
+          className="appearance-none bg-transparent px-3 py-1 pr-8 text-sm focus:outline-none cursor-pointer"
         >
           {placeholder && (
             <option value="" disabled>

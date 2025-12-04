@@ -4,14 +4,15 @@ import * as React from "react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import { Button } from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
+import {Select} from "@/components/ui/select";
 import {SelectButton} from "@/components/ui/selectbutton";
 import {Input} from "@/components/ui/input";
 import {Card} from "@/components/ui/card";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
+import Link from "next/link";
 import { 
-    setLocation, 
-    setCategory, 
+    setLocation,
     setIsTrade, 
     setItemCategory, 
     setPriceButton, 
@@ -20,50 +21,35 @@ import {
     setKeyword,
     resetFilter 
 } from '@/lib/usedFilterSlice';
-
+import { useRouter } from "next/navigation";
 
 export default function UsedPage(){
+    const router = useRouter();
     const dispatch = useDispatch();
     const filters = useSelector((state: RootState) => state.usedFilter);
     return(
         <div>
             <div className="flex w-full items-center gap-8 pb-10 justify-center">
 
-                <div className="relative flex items-start self-start bg-black text-white rounded-full px-4 py-2 cursor-pointer h-12">
-                    <img src="/utils/locationIcon.png" alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
+                <div className="relative flex items-start self-start bg-black rounded-full px-3 py-2 cursor-pointer h-12">
+                    <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/locationIcon.png`} alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
                     <select
-                        className="appearance-none bg-transparent pr-6 pl-1 self-center text-white text-sm focus:outline-none relative z-10"
-                        value={filters.location}
-                        onChange={(e) => dispatch(setLocation(e.target.value))}
+                        className="appearance-none bg-transparent pr-5 pl-1 self-center text-white text-sm focus:outline-none relative z-10 cursor-pointer"
                     >
                         <option className='text-black'>가산동</option>
                         <option className='text-black'>독산동</option>
                         <option className='text-black'>신림동</option>
                     </select>
-
                     <ChevronDownIcon
                         aria-hidden="true"
-                        className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-4 text-gray-200"
+                        className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-4 text-white"
                     />
                 </div>
                 <div className="flow-root">
                     <div className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-2 w-[900px] h-12">
 
                         <div className="relative min-w-[90px] pointer-events-auto">
-                            <select
-                                className="appearance-none bg-transparent pr-6 pl-1 text-gray-700 text-sm focus:outline-none relative z-10"
-                                value={filters.category}
-                                onChange={(e) => dispatch(setCategory(e.target.value))}
-                            >
-                                <option>중고거래</option>
-                                <option>알바</option>
-                                <option>동네생활</option>
-                            </select>
-
-                            <ChevronDownIcon
-                                aria-hidden="true"
-                                className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-4 text-gray-600"
-                            />
+                            <Select options={['중고거래','알바','동네생활']}/>
                         </div>
                         <div className="h-5 w-px bg-gray-300 mx-3"></div>
 
@@ -75,7 +61,7 @@ export default function UsedPage(){
                         onChange={(e) => dispatch(setKeyword(e.target.value))}
                         />
                         <button className="btn btn-circle text-white">
-                            <img src="/utils/searchIcon.png" alt="searchIcon" width={30} height={30} className="object-contain"/>
+                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/searchIcon.png`} alt="searchIcon" width={30} height={30} className="object-contain"/>
                         </button>
                     </div>
 
@@ -94,12 +80,20 @@ export default function UsedPage(){
                 </div>
             </div>
             <div className="py-8">
-                <p className="text-sm text-gray-400">홈 {'>'}  중고거래</p>
+                <div className="flex gap-1 text-sm text-gray-400">
+                    <p><Link href="/">홈</Link></p>
+                    <p> {'>'} </p>
+                    <p><Link href="/used">중고거래</Link></p>
+                </div>
                 <div className="flex">
                     <p className="text-2xl font-bold">OOO시 OOO구 OOO동 중고거래</p>
-                    <Button type="button" className="bg-amber-500 hover:bg-amber-600 ml-auto">
+                    <Button 
+                        variant="ghost"
+                        className="bg-amber-500 hover:bg-amber-600 ml-auto"
+                        onClick={() => router.push('/post')}
+                    >
                         <div className= "flex">
-                            <img src="/utils/plusIcon.png" alt="plusIcon" className='size-5 mr-2'/>
+                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/plusIcon.png`} alt="plusIcon" className='size-5 mr-2'/>
                             <p className="text-white">글쓰기</p>
                         </div>
                     </Button>
@@ -129,9 +123,15 @@ export default function UsedPage(){
                             <div className="flex-flow pt-4">
                                 <p className="text-sm font-bold">위치</p>
                                 <p className="text-sm text-gray-300">OOO시 OOO구</p>
-                                <Checkbox id="comments" name="comments" label="OOO동" />
-                                <Checkbox id="comments" name="comments" label="OOO동" />
-                                <Checkbox id="comments" name="comments" label="OOO동" />
+                                <Checkbox id="comments1" name="comments1" label="가산동" checked={filters.location === "가산동"} onChange={(checked) => 
+                                        dispatch(setLocation(checked ? "가산동" : ""))
+                                    } />
+                                <Checkbox id="comments2" name="comments2" label="독산동" checked={filters.location === "독산동"} onChange={(checked) => 
+                                        dispatch(setLocation(checked ? "독산동" : ""))
+                                    } />
+                                <Checkbox id="comments3" name="comments3" label="신림동" checked={filters.location === "신림동"} onChange={(checked) => 
+                                        dispatch(setLocation(checked ? "신림동" : ""))
+                                    } />
                             </div>
                             <div className="flex-flow pt-4">
                                 <p className="text-sm font-bold">카테고리</p>
@@ -230,7 +230,6 @@ export default function UsedPage(){
                 </div>
                 <div className="flex-flow w-5/6">
                     <div className="py-5">
-                        <p className="text-base font-bold mb-3">적용필터 확인란</p>
                         <div className="flex flex-wrap gap-2">
                             {filters.location && (
                                 <span className="px-3 py-1 bg-gray-100 rounded-full text-sm">
@@ -270,19 +269,19 @@ export default function UsedPage(){
                         </div>
                     </div>
                     <div className="flex flex-wrap gap-3">
-                        <Card image="/utils/sampleImage.png" title="상품1" price={0} />
-                        <Card image="/utils/sampleImage.png" title="상품2" price={0} />
-                        <Card image="/utils/sampleImage.png" title="상품3" price={0} />
-                        <Card image="/utils/sampleImage.png" title="상품4" price={0} />
-                        <Card image="/utils/sampleImage.png" title="상품4" price={0} />
-                        <Card image="/utils/sampleImage.png" title="상품4" price={0} />
-                        <Card image="/utils/sampleImage.png" title="상품4" price={0} />
-                        <Card image="/utils/sampleImage.png" title="상품4" price={0} />
+                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품1" price={0} onClick={() => router.push('/used/1')} />
+                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품2" price={0} onClick={() => router.push('/used/2')} />
+                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품3" price={0} onClick={() => router.push('/used/3')} />
+                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품4" price={0} onClick={() => router.push('/used/4')} />
+                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품5" price={0} onClick={() => router.push('/used/5')} />
+                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품6" price={0} onClick={() => router.push('/used/6')} />
+                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품7" price={0} onClick={() => router.push('/used/7')} />
+                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품8" price={0} onClick={() => router.push('/used/8')} />
                     </div>
                 </div>
             </div>
             <div className="w-full mt-10">
-                <img src="/utils/subfooter.png" alt="subfooter" className="w-full" />
+                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/subfooter.png`} alt="subfooter" className="w-full" />
             </div>
         </div>
     )

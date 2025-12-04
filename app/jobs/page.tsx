@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import { Button } from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -12,7 +12,7 @@ export default function JobsPage(){
             <div className="flex w-full items-center gap-8 pb-10 justify-center">
 
                 <div className="relative flex items-start self-start bg-black text-white rounded-full px-4 py-2 cursor-pointer h-12">
-                    <img src="/utils/locationIcon.png" alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
+                    <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/locationIcon.png`} alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
                     <select
                         className="appearance-none bg-transparent pr-6 pl-1 self-center text-white text-sm focus:outline-none relative z-10"
                     >
@@ -51,7 +51,7 @@ export default function JobsPage(){
                         className="flex-grow bg-transparent focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
                         />
                         <button className="btn btn-circle text-white">
-                            <img src="/utils/searchIcon.png" alt="Search Icon" width={30} height={30}/>
+                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/searchIcon.png`} alt="Search Icon" width={30} height={30}/>
                         </button>
                     </div>
 
@@ -75,7 +75,7 @@ export default function JobsPage(){
                     <p className="text-2xl font-bold">OOO시 OOO구 OOO동 알바</p>
                     <Button type="button" className="bg-amber-500 hover:bg-amber-600 ml-auto">
                         <div className= "flex">
-                            <img src="/utils/plusIcon.png" alt="plusIcon" className='size-5 mr-2'/>
+                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/plusIcon.png`} alt="plusIcon" className='size-5 mr-2'/>
                             <p className="text-white">글쓰기</p>
                         </div>
                     </Button>
@@ -149,7 +149,7 @@ export default function JobsPage(){
                             { text: "당일지급", bgColor: "bg-green-200", textColor: "text-green-900" },
                             { text: "후기25개", bgColor: "bg-gray-200", textColor: "text-gray-900" }
                             ]}
-                            image="/utils/sampleImage.png"
+                            image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
                         />
                         <JobStyleCard 
                             title="Title" 
@@ -159,7 +159,7 @@ export default function JobsPage(){
                             { text: "당일지급", bgColor: "bg-green-200", textColor: "text-green-900" },
                             { text: "후기25개", bgColor: "bg-gray-200", textColor: "text-gray-900" }
                             ]}
-                            image="/utils/sampleImage.png"
+                            image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
                         />
                         <JobStyleCard 
                             title="Title" 
@@ -169,7 +169,7 @@ export default function JobsPage(){
                             { text: "당일지급", bgColor: "bg-green-200", textColor: "text-green-900" },
                             { text: "후기25개", bgColor: "bg-gray-200", textColor: "text-gray-900" }
                             ]}
-                            image="/utils/sampleImage.png"
+                            image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
                         />
                         <JobStyleCard 
                             title="Title" 
@@ -179,14 +179,14 @@ export default function JobsPage(){
                             { text: "당일지급", bgColor: "bg-green-200", textColor: "text-green-900" },
                             { text: "후기25개", bgColor: "bg-gray-200", textColor: "text-gray-900" }
                             ]}
-                            image="/utils/sampleImage.png"
+                            image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
                         />
                         
                     </div>
                 </div>
             </div>
             <div className="w-full mt-10">
-                <img src="/utils/subfooter.png" alt="subfooter" className="w-full" />
+                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/subfooter.png`} alt="subfooter" className="w-full" />
             </div>
         </div>
     )

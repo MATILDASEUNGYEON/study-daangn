@@ -7,7 +7,7 @@ export default function Login() {
     <div>
         <div className="flex flex-col items-center pt-20 pb-30 px-4">
             <div className="flex flex-col items-center mb-10">
-                <img src="/utils/logo.png" alt="logo" width={200} height={60} className="object-contain"/>
+                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/logo.png`} alt="logo" width={200} height={60} className="object-contain"/>
             </div>
 
             <div className="w-full max-w-md rounded-xl border border-gray-300 p-8 shadow-sm">
@@ -57,7 +57,7 @@ export default function Login() {
             </div>
         </div>
         <div className="w-full mt-10">
-            <img src="/utils/subfooter.png" alt="subfooter" className="w-full" />
+            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/subfooter.png`} alt="subfooter" className="w-full" />
         </div>
     </div>
   );

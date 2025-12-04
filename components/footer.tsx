@@ -1,10 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
-import icon from "../public/utils/icon.png"
-import contactUs from "../public/utils/contactUs.png";
-import arraowIcon from "../public/utils/arrowIcon.png";
 
 export function FooterImpl(){
 
@@ -14,8 +10,8 @@ export function FooterImpl(){
             <div className="flex">
             
                 <div className="w-1/9 flow-root">
-                    <Image src={icon} alt="icon" width={40} height={40} className="object-contain m-4"/>
-                    <Image src={contactUs} alt="contactUs" width={72} height={24} className="object-contain m-4"/>
+                    <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/icon.png`} alt="icon" width={40} height={40} className="object-contain m-4"/>
+                    <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/contactUs.png`} alt="contactUs" width={72} height={24} className="object-contain m-4"/>
                 </div>
                 <div className="w-2/9 flow-root">
                     <div className="flow-root">
@@ -45,20 +41,11 @@ export function FooterImpl(){
                     <p className="text-sm">제휴 문의</p>
                     <p className="text-sm">광고 문의</p>
                 </div>
-                <div className="w-2/9 flow-root">
+                <div className="w-2/9 flex flex-col">
                     <p className="py-2 text-sm font-bold">Karrot</p>
-                    <div className="flex pt-2 gap-1">
-                        <p className="text-sm">Canada</p>
-                        <Image src={arraowIcon} alt="arraowIcon" width={11} height={11} className="object-contain"/>
-                    </div>
-                    <div className="flex pt-2 gap-1">
-                        <p className="text-sm">United States</p>
-                        <Image src={arraowIcon} alt="arraowIcon" width={11} height={11} className="object-contain"/>
-                    </div>
-                    <div className="flex pt-2 gap-1">
-                        <p className="text-sm">United Kingdom</p>
-                        <Image src={arraowIcon} alt="arraowIcon" width={11} height={11} className="object-contain"/>
-                    </div>
+                    <a className="text-sm text-black after:content-['_↗']" href="https://www.naver.com/">Canada</a>
+                    <a className="text-sm text-black after:content-['_↗']" href="https://www.naver.com/">United States</a>
+                    <a className="text-sm text-black after:content-['_↗']" href="https://www.naver.com/">United Kingdom</a>
                     
                 </div>
                 

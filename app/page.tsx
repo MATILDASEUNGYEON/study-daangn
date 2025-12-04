@@ -2,23 +2,45 @@
 
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { useRouter } from 'next/navigation'
+import {useEffect, useState} from 'react'
 
-
+const words=["중고거래","알바","동네생활","채팅하기","당근페이","당근마켓 비즈니스"]
 
 export default function Home() {
   const router = useRouter();
+  const [index,setIndex]=useState(0);
+
+  useEffect(()=>{
+    const timer= setInterval(()=>{
+      setIndex((prevIndex)=>(prevIndex+1)%words.length)
+    },1000);
+    return () => clearInterval(timer);
+  }, [])
 
   return (
     <div className='flex justify-center flex-col items-center gap-6 mt-20'>
       <div className="p-6">
-        <h1 className="text-3xl font-bold">OO에서 OO 찾고 계신가요?</h1>
+        <span
+        key={index}
+        className="
+          text-3xl 
+          font-bold
+          inline-block
+          animate__animated
+          animate__fadeInUp
+          animate__duration-700
+        "
+      >
+        OO에서 {words[index]} 찾고 계신가요?
+      </span>
+
       </div>
 
       <div className="flex items-center gap-3 pb-10">
 
         <div className="relative flex items-start self-start bg-black text-white rounded-full px-4 py-2 cursor-pointer h-12">
           
-          <img src="/utils/locationIcon.png" alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
+          <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/locationIcon.png`} alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
           <select
             className="appearance-none bg-transparent pr-6 pl-1 self-center text-white text-sm focus:outline-none relative z-10"
           >
@@ -58,7 +80,7 @@ export default function Home() {
             />
             <button className="btn btn-circle text-white">
               
-              <img src="/utils/searchIcon.png" alt="searchIcon" width={30} height={30} className="object-contain"/>
+              <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/searchIcon.png`} alt="searchIcon" width={30} height={30} className="object-contain"/>
             </button>
           </div>
 
@@ -83,7 +105,7 @@ export default function Home() {
           className='w-30 h-25 bg-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow'
           onClick={() => router.push('/used')}
         >
-          <img src="/utils/itemsIcon.png" alt="itemsIcon" width={60} height={60} className="object-contain p-4"/>
+          <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/itemsIcon.png`} alt="itemsIcon" width={60} height={60} className="object-contain p-4"/>
           <div className='px-4 pb-4'>
             <h2 className='font-bold text-lg'>중고거래</h2>
           </div>
@@ -92,7 +114,7 @@ export default function Home() {
           className='w-30 h-25 bg-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow'
           onClick={() => router.push('/jobs')}
         >
-          <img src="/utils/storageIcon.png" alt="storageIcon" width={63} height={63} className="object-contain p-4"/>
+          <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/storageIcon.png`} alt="storageIcon" width={63} height={63} className="object-contain p-4"/>
           <div className='px-4 pb-4'>
             <h2 className='font-bold text-lg'>알바</h2>
           </div>
@@ -101,7 +123,7 @@ export default function Home() {
           className='w-30 h-25 bg-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow'
           onClick={() => router.push('/life')}
         >
-          <img src="/utils/lifeIcon.png" alt="lifeIcon" width={60} height={60} className="object-contain p-4"/>
+          <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/lifeIcon.png`} alt="lifeIcon" width={60} height={60} className="object-contain p-4"/>
           <div className='px-4 pb-4'>
             <h2 className='font-bold text-lg'>동네생활</h2>
           </div>

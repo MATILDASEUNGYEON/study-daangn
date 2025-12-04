@@ -4,8 +4,6 @@ import * as React from "react";
 import {useSelector,useDispatch} from "react-redux";
 import {RootState} from '../lib/store';
 import {logout} from '../lib/authSlice';
-import Image from "next/image";
-import logo from "../public/utils/logo.png";
 import Link from "next/link";
 
 export function HeaderImpl(){
@@ -17,9 +15,9 @@ export function HeaderImpl(){
     };
 
     return(
-        <header className="w-full h-20 bg-white px-10 flex items-center">
-            <Link href="/" className="flex items-center cursor-pointer">
-                <Image src={logo} alt="Logo" width={180} height={60} className="object-contain" />
+        <header className="w-full h-20 bg-white flex items-center">
+            <Link href="/" className="flex cursor-pointer ">
+                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/logo.png`} alt="logo" width={180} height={60} className="object-contain" />
             </Link>
 
             <div className="flex-1"></div>
