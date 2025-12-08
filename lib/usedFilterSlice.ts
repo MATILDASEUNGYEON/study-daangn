@@ -1,7 +1,16 @@
 import {createSlice,PayloadAction} from '@reduxjs/toolkit'
 
+export interface UserAddress {
+    dong: string;
+    city: string;
+    borough: string;
+    main: string;
+    full: string;
+}
+
 interface UsedFilterState {
     location: string;
+    userAddress: UserAddress | null;
     category: string;
     isTrade: boolean;
     itemCategory: string;
@@ -12,6 +21,7 @@ interface UsedFilterState {
 }
 const initialState: UsedFilterState = {
     location: "",
+    userAddress: null,
     category: "중고거래",
     isTrade: false,
     itemCategory: "",
@@ -27,6 +37,19 @@ const UsedFilterSlice= createSlice({
     reducers:{
         setLocation: (state, action:PayloadAction<string>)=>{
             state.location = action.payload;
+        },
+        setUserAddress: (state, action:PayloadAction<UserAddress | null>)=>{
+            state.userAddress = action.payload;
+            if (action.payload) {
+                state.location = action.payload.dong;
+            }
+        },
+        updateDong: (state, action:PayloadAction<string>)=>{
+            state.location = action.payload;
+            if (state.userAddress) {
+                state.userAddress.dong = action.payload;
+                state.userAddress.full = `${state.userAddress.city} ${state.userAddress.borough} ${action.payload}`;
+            }
         },
         setCategory: (state, action:PayloadAction<string>)=>{
             state.category = action.payload;
@@ -57,7 +80,6 @@ const UsedFilterSlice= createSlice({
         },
 
         resetFilter: (state) => {
-            state.location = "";
             state.itemCategory = "";
             state.priceButton = null;
             state.minPrice = "";
@@ -69,6 +91,8 @@ const UsedFilterSlice= createSlice({
 
 export const {
     setLocation,
+    setUserAddress,
+    updateDong,
     setCategory,
     setIsTrade,
     setItemCategory,

@@ -1,14 +1,14 @@
 'use client'
 
 import React from "react"
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CategoryItem } from "@/components/ui/categoryitem";
 
-// Leaflet은 window 객체가 필요하므로 SSR 비활성화
+
 const LeafletMap = dynamic(() => import("@/components/mapLeaflet"), {
   ssr: false,
   loading: () => <div className="w-full h-[380px] rounded-md overflow-hidden border flex items-center justify-center bg-gray-100">지도 로딩 중...</div>
@@ -16,7 +16,20 @@ const LeafletMap = dynamic(() => import("@/components/mapLeaflet"), {
 
 export default function PostPage(){
     const [address, setAddress] = useState<{ region: string; dong: string } | null>(null);
-    
+
+    const [categories, setCategories] = useState<string[]>([]);
+    useEffect(() => {
+            const fetchCategories = async () => {
+                try {
+                    const response = await fetch('/api/buy-sell/category');
+                    const data = await response.json();
+                    setCategories(data.categories);
+                } catch (error) {
+                    console.error('카테고리 조회 실패:', error);
+                }
+            };
+            fetchCategories();
+        }, []);
     return(
         <div>
             <div className="w-full h-px bg-gray-100 my-4"></div>
@@ -50,13 +63,16 @@ export default function PostPage(){
             </div>      
             <div className="col-span-full mb-6">
                 <label className="mb-2 block text-sm font-medium text-gray-900">카테고리 선택</label>
-                <div className="flex gap-4">
-                    <CategoryItem id="cat-digital" name="category" label="디지털기기" />
-                    <CategoryItem id="cat-living" name="category" label="생활가전" />
-                    <CategoryItem id="cat-furniture" name="category" label="가구/인테리어" />
-                    <CategoryItem id="cat-kids" name="category" label="생활/주방" />
-                    <CategoryItem id="cat-sports" name="category" label="유아동" />
-                    <CategoryItem id="cat-etc" name="category" label="기타" />
+                <div className="flex flex-wrap gap-4">
+
+                    {categories.map((category)=>(
+                        <CategoryItem
+                            key={category}
+                            id={`cat-${category}`}
+                            name={`category-${category}`}
+                            label={category}
+                        />
+                    ))}
                 </div>
             </div>
             <div className="col-span-full mb-6">

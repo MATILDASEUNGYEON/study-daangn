@@ -1,15 +1,15 @@
 'use client'
 
-import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { useRouter } from 'next/navigation'
 import {useEffect, useState} from 'react'
-
+import {Select} from '@/components/ui/select'
 const words=["중고거래","알바","동네생활","채팅하기","당근페이","당근마켓 비즈니스"]
 
 export default function Home() {
   const router = useRouter();
   const [index,setIndex]=useState(0);
-
+  
+  
   useEffect(()=>{
     const timer= setInterval(()=>{
       setIndex((prevIndex)=>(prevIndex+1)%words.length)
@@ -19,10 +19,12 @@ export default function Home() {
 
   return (
     <div className='flex justify-center flex-col items-center gap-6 mt-20'>
-      <div className="p-6">
+      <div className="flex p-6">
+        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/icons/location_Icon_black.png`} alt="logo" width={30} height={30} className="object-contain"/>
         <span
         key={index}
         className="
+          pl-2
           text-3xl 
           font-bold
           inline-block
@@ -31,51 +33,26 @@ export default function Home() {
           animate__duration-700
         "
       >
-        OO에서 {words[index]} 찾고 계신가요?
+        당근에서 {words[index]} 찾고 계신가요?
       </span>
 
       </div>
 
       <div className="flex items-center gap-3 pb-10">
 
-        <div className="relative flex items-start self-start bg-black text-white rounded-full px-4 py-2 cursor-pointer h-12">
-          
-          <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/locationIcon.png`} alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
-          <select
-            className="appearance-none bg-transparent pr-6 pl-1 self-center text-white text-sm focus:outline-none relative z-10"
-          >
-            <option className='text-black'>가산동</option>
-            <option className='text-black'>독산동</option>
-            <option className='text-black'>신림동</option>
-          </select>
-
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-4 text-gray-200"
-          />
-        </div>
         <div className="flow-root">
-          <div className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-2 w-[600px] h-12">
+          <div className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-2 w-[800px] h-12">
 
             <div className="relative min-w-[90px] pointer-events-auto">
-              <select
-                className="appearance-none bg-transparent pr-6 pl-1 text-gray-700 text-sm focus:outline-none relative z-10"
-              >
-                <option>중고거래</option>
-                <option>알바</option>
-                <option>동네생활</option>
-              </select>
+              
+              <Select options={['중고거래','알바','동네생활']} className="pl-1 text-gray-700 text-lg font-bold"/>
 
-              <ChevronDownIcon
-                aria-hidden="true"
-                className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-4 text-gray-600"
-              />
             </div>
             <div className="h-5 w-px bg-gray-300 mx-3"></div>
 
             <input
               type="text"
-              placeholder="Search"
+              placeholder="검색어를 입력해주세요"
               className="flex-grow bg-transparent focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
             />
             <button className="btn btn-circle text-white">

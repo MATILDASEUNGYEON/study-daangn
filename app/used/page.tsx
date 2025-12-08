@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
 import { Button } from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -8,11 +8,13 @@ import {Select} from "@/components/ui/select";
 import {SelectButton} from "@/components/ui/selectbutton";
 import {Input} from "@/components/ui/input";
 import {Card} from "@/components/ui/card";
+import {List, ListItem} from "@/components/ui/list";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import Link from "next/link";
-import { 
-    setLocation,
+import {
+    setUserAddress,
+    updateDong,
     setIsTrade, 
     setItemCategory, 
     setPriceButton, 
@@ -22,29 +24,116 @@ import {
     resetFilter 
 } from '@/lib/usedFilterSlice';
 import { useRouter } from "next/navigation";
+import { useUserLocation } from "@/hooks/useUserLocation";
+import { UserAddress } from "@/hooks/useUserLocation";
+import { Modal } from "@/components/ui/modal";
+import { fetchDongListByAddressMain, DongInfo } from "@/lib/services/location.service";
 
 export default function UsedPage(){
     const router = useRouter();
     const dispatch = useDispatch();
     const filters = useSelector((state: RootState) => state.usedFilter);
+    const userAddress = useSelector((state: RootState) => state.usedFilter.userAddress);
+    const [categories, setCategories] = useState<string[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [dongList, setDongList] = useState<DongInfo[]>([]);
+
+    const recommendedLocations: ListItem[] = [
+        { id: 1, label: "인천광역시,연수구,송도동" },
+        { id: 2, label: "서울특별시,강남구,역삼동" },
+        { id: 3, label: "경상남도,양산시,물금읍"},
+        { id: 4, label: "경기도,화성시,봉담읍"},
+        { id: 5, label: "서울특별시,서초구,서초동" },
+        { id: 6, label: "서울특별시,마포구,망원동" },
+        { id: 7, label: "경기도,양주시,옥정동"},
+        { id: 8, label: "서울특별시,관악구,신림동" },
+        { id: 9, label: "충청남도,천안시 서북구,불당동" },
+        { id: 10, label: "대전광역시,유성구,봉명동" }
+    ];
+
+    const handleLocationSelect = (item: ListItem) => {
+        const parts = item.label.split(",");
+        if (parts.length >= 3) {
+            const city = parts[0];
+            const borough = parts[1];
+            const dong = parts[2];
+            dispatch(setUserAddress({
+                city,
+                borough,
+                dong,
+                main: `${city} ${borough}`,
+                full: item.label
+            }));
+            setIsModalOpen(false);
+        }
+    };
+
+    const handleLocationDetect = useCallback((address: UserAddress) => {
+        if (address) {
+            dispatch(setUserAddress(address));
+        }
+    }, [dispatch]);
+
+    useUserLocation(handleLocationDetect);
+
+    useEffect(() => {
+        const loadDongList = async () => {
+            if (userAddress?.main) {
+                const dongs = await fetchDongListByAddressMain(userAddress.main);
+                setDongList(dongs);
+            }
+        };
+        loadDongList();
+    }, [userAddress?.main]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('/api/buy-sell/category');
+                const data = await response.json();
+                setCategories(data.categories);
+            } catch (error) {
+                console.error('카테고리 조회 실패:', error);
+            }
+        };
+        fetchCategories();
+    }, []);
     return(
         <div>
             <div className="flex w-full items-center gap-8 pb-10 justify-center">
-
-                <div className="relative flex items-start self-start bg-black rounded-full px-3 py-2 cursor-pointer h-12">
+                <div 
+                    className="relative flex items-start self-start bg-black rounded-full px-3 py-2 cursor-pointer h-12"
+                    onClick={() => setIsModalOpen(true)}
+                >
                     <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/locationIcon.png`} alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
-                    <select
-                        className="appearance-none bg-transparent pr-5 pl-1 self-center text-white text-sm focus:outline-none relative z-10 cursor-pointer"
-                    >
-                        <option className='text-black'>가산동</option>
-                        <option className='text-black'>독산동</option>
-                        <option className='text-black'>신림동</option>
-                    </select>
+                    <span className="self-center text-white text-sm pr-5">{userAddress?.dong || "위치 선택"}</span>
                     <ChevronDownIcon
                         aria-hidden="true"
                         className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 size-4 text-white"
                     />
                 </div>
+
+                <Modal 
+                    isOpen={isModalOpen} 
+                    onClose={() => setIsModalOpen(false)}
+                    title="지역 변경"
+                >
+                    <div className="flex flex-col gap-3">
+                        <Input 
+                            placeholder="지역이나 동네로 검색하기"
+                            icon={<img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/icons/Search_Icon.png`} alt="searchIcon" width={20} height={20} />}
+                        />
+                        <Button variant="ghost" size="full" className="bg-amber-100">
+                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/icons/Compose_Icon.png`} alt="composeIcon" width={20} height={20} />
+                            <p className="text-amber-600">현재 내 위치 사용하기</p>
+                        </Button>
+                        <p className="text-xs text-blue-500 font-bold">추천</p>
+                        <List 
+                            items={recommendedLocations} 
+                            onItemClick={handleLocationSelect}
+                        />
+                    </div>
+                </Modal>
                 <div className="flow-root">
                     <div className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-2 w-[900px] h-12">
 
@@ -86,7 +175,7 @@ export default function UsedPage(){
                     <p><Link href="/used">중고거래</Link></p>
                 </div>
                 <div className="flex">
-                    <p className="text-2xl font-bold">OOO시 OOO구 OOO동 중고거래</p>
+                    <p className="text-2xl font-bold">{userAddress?.main} {userAddress?.dong || "내 동네"} 중고거래</p>
                     <Button 
                         variant="ghost"
                         className="bg-amber-500 hover:bg-amber-600 ml-auto"
@@ -122,64 +211,39 @@ export default function UsedPage(){
                         
                             <div className="flex-flow pt-4">
                                 <p className="text-sm font-bold">위치</p>
-                                <p className="text-sm text-gray-300">OOO시 OOO구</p>
-                                <Checkbox id="comments1" name="comments1" label="가산동" checked={filters.location === "가산동"} onChange={(checked) => 
-                                        dispatch(setLocation(checked ? "가산동" : ""))
-                                    } />
-                                <Checkbox id="comments2" name="comments2" label="독산동" checked={filters.location === "독산동"} onChange={(checked) => 
-                                        dispatch(setLocation(checked ? "독산동" : ""))
-                                    } />
-                                <Checkbox id="comments3" name="comments3" label="신림동" checked={filters.location === "신림동"} onChange={(checked) => 
-                                        dispatch(setLocation(checked ? "신림동" : ""))
-                                    } />
+                                <p className="text-sm text-gray-400">{userAddress?.main}</p>
+                                {dongList.length > 0 ? (
+                                    dongList.map((dong) => (
+                                        <Checkbox 
+                                            key={dong.name}
+                                            id={`dong-${dong.name}`}
+                                            name={`dong-${dong.name}`}
+                                            label={dong.displayName}
+                                            checked={filters.location === dong.name}
+                                            onChange={(checked) => {
+                                                const newDong = checked ? dong.name : "";
+                                                dispatch(updateDong(newDong));
+                                            }}
+                                        />
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-gray-400">동네 정보를 불러올 수 없습니다.</p>
+                                )}
                             </div>
-                            <div className="flex-flow pt-4">
-                                <p className="text-sm font-bold">카테고리</p>
-                                <Checkbox 
-                                    id="digital" 
-                                    name="digital" 
-                                    label="디지털기기"
-                                    checked={filters.itemCategory === "디지털기기"}
-                                    onChange={(checked) => 
-                                        dispatch(setItemCategory(checked ? "디지털기기" : ""))
-                                    }
-                                />
-                                <Checkbox 
-                                    id="appliance" 
-                                    name="appliance" 
-                                    label="생활가전"
-                                    checked={filters.itemCategory === "생활가전"}
-                                    onChange={(checked) => 
-                                        dispatch(setItemCategory(checked ? "생활가전" : ""))
-                                    }
-                                />
-                                <Checkbox 
-                                    id="furniture" 
-                                    name="furniture" 
-                                    label="가구/인테리어"
-                                    checked={filters.itemCategory === "가구/인테리어"}
-                                    onChange={(checked) => 
-                                        dispatch(setItemCategory(checked ? "가구/인테리어" : ""))
-                                    }
-                                />
-                                <Checkbox 
-                                    id="living" 
-                                    name="living" 
-                                    label="생활/주방"
-                                    checked={filters.itemCategory === "생활/주방"}
-                                    onChange={(checked) => 
-                                        dispatch(setItemCategory(checked ? "생활/주방" : ""))
-                                    }
-                                />
-                                <Checkbox 
-                                    id="kids" 
-                                    name="kids" 
-                                    label="유아동"
-                                    checked={filters.itemCategory === "유아동"}
-                                    onChange={(checked) => 
-                                        dispatch(setItemCategory(checked ? "유아동" : ""))
-                                    }
-                                />
+                            <div className="flex-flow pt-4 ">
+                                <p className="text-sm font-bold pb-3">카테고리</p>
+                                {categories.map((category) => (
+                                    <Checkbox 
+                                        key={category}
+                                        id={`category-${category}`}
+                                        name={`category-${category}`}
+                                        label={category}
+                                        checked={filters.itemCategory === category}
+                                        onChange={(checked) => 
+                                            dispatch(setItemCategory(checked ? category : ""))
+                                        }
+                                    />
+                                ))}
                             </div>
                             <div className="flex flex-col gap-2 pt-4 items-start">
                                 <p className="text-sm font-bold pb-3">가격</p>

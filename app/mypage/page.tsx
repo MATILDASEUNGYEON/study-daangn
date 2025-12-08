@@ -2,21 +2,27 @@
 
 import React from 'react';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store'
+
 export default function MyPage(){
+    const userAddress = useSelector((state: RootState) => state.usedFilter.userAddress);
+    const user = useSelector((state: RootState)=> state.auth.user);
     return(
         <div>
         <div className='flex justify-center'>
             <div className='flow-root border border-gray-200 rounded-xl p-10 m-10 w-90 h-auto '>
                 <div className='flex flow-root justify-items-center pb-5'>
                     <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/profileIcon.png`} alt="profileIcon" width={60} height={60} className="object-contain m-4"/>
-                    <p className='text-lg font-bold'>username</p>
+                    <p className='text-lg font-bold'>{user?.id}</p>
                 </div>
                 <div className="flex pb-3">
                     <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/locationIcon.png`} alt="mapIcon" className='size-5'/>
                     <p className='text-base pl-3'>동네 설정</p>
                 </div>
                 <div className="mt-1 block w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-gray-500 focus:border-amber-500 focus:ring-amber-500">
-                    서울특별시 금천구 가산동
+                    
+                    {userAddress == null ? '동네 설정이 필요합니다.' : `${userAddress.main} ${userAddress.dong}`}
                 </div>
             </div>
             <div className='flow-root border border-gray-200 rounded-xl p-6 m-10 w-150 h-auto'>

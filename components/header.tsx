@@ -5,13 +5,25 @@ import {useSelector,useDispatch} from "react-redux";
 import {RootState} from '../lib/store';
 import {logout} from '../lib/authSlice';
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export function HeaderImpl(){
     const isLoggedIn = useSelector((state: RootState) => state.auth.isLogin);
+    const user = useSelector((state: RootState) => state.auth.user);
     const dispatch = useDispatch();
+    const router = useRouter();
 
-    const handleLogout = () => {
-        dispatch(logout());
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            
+            dispatch(logout());
+            
+            router.push('/');
+        } catch (error) {
+            console.error('로그아웃 오류:', error);
+        }
     };
 
     return(
@@ -26,28 +38,26 @@ export function HeaderImpl(){
                 {isLoggedIn ? (
                     <>
                         <Link href="/mypage">
-                            <button className="px-6 py-2.5 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
-                                마이페이지
-                            </button>
+                            <Button variant="ghost" size="lg" className="bg-amber-500 text-white hover:bg-amber-600">
+                                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/profileIcon.png`} alt="profileIcon" width={20} height={20} className="object-contain mr-2"/>
+                                {user?.id}
+                            </Button>
                         </Link>
-                        <button 
-                            onClick={handleLogout}
-                            className="px-6 py-2.5 bg-amber-500 text-white rounded-lg hover:bg-amber-600"
-                        >
+                        <Button variant="ghost" size="lg" className="bg-amber-500 text-white hover:bg-amber-600" onClick={handleLogout}>
                             로그아웃
-                        </button>
+                        </Button>
                     </>
                 ) : (
                     <>
                         <Link href="/login">
-                            <button className="px-6 py-2.5 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+                            <Button variant="ghost" size="lg" className="bg-amber-500 text-white hover:bg-amber-600">
                                 로그인
-                            </button>
+                            </Button>
                         </Link>
                         <Link href="/signup">
-                            <button className="px-6 py-2.5 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+                            <Button variant="ghost" size="lg" className="bg-amber-500 text-white hover:bg-amber-600">
                                 회원가입
-                            </button>
+                            </Button>
                         </Link>
                     </>
                 )}

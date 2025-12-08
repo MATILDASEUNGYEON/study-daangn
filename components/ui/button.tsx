@@ -2,7 +2,7 @@ import React from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
-  size?: "default" | "sm" | "lg" | "icon";
+  size?: "default" | "sm" | "lg" | "icon" | "full";
 }
 
 const getVariantClasses = (variant: ButtonProps["variant"] = "default") => {
@@ -29,6 +29,8 @@ const getSizeClasses = (size: ButtonProps["size"] = "default") => {
       return "h-8 px-3 text-xs";
     case "lg":
       return "h-11 px-8 text-base";
+    case "full" :
+      return "w-full h-9 text-base";
     case "icon":
       return "h-9 w-9 p-0";
     case "default":

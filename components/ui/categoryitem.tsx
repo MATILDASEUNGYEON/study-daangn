@@ -12,7 +12,7 @@ export function CategoryItem({ id, name, label, checked, onChange }: CategoryIte
   return (
     <div>
       <input
-        type="radio"
+        type="checkbox"
         id={id}
         name={name}
         checked={checked}
