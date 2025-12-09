@@ -5,14 +5,14 @@ interface CategoryItemProps {
   name: string;
   label: string;
   checked?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: () => void;
 }
 
 export function CategoryItem({ id, name, label, checked, onChange }: CategoryItemProps) {
   return (
     <div>
       <input
-        type="checkbox"
+        type="radio"
         id={id}
         name={name}
         checked={checked}

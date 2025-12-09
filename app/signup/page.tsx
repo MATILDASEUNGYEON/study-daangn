@@ -48,7 +48,7 @@ export default function Signup() {
         alert('사용 가능한 아이디입니다.');
         setIsIdChecked(true);
       }
-    } catch (err) {
+    } catch {
       alert('중복 확인 중 오류가 발생했습니다.');
     }
   };

@@ -47,7 +47,7 @@ function parseAddress(addr: Record<string, string>) {
 function LocateUser({
   onLocate,
 }: {
-  onLocate: (lat: number, lng: number, accuracy: number) => void;
+  onLocate: (lat: number, lng: number) => void;
 }) {
   const map = useMap();
   const [located, setLocated] = useState(false);
@@ -59,7 +59,7 @@ function LocateUser({
 
     const handleLocationFound = (e: L.LocationEvent) => {
       console.log("현재 위치:", e);
-      onLocate(e.latlng.lat, e.latlng.lng, e.accuracy);
+      onLocate(e.latlng.lat, e.latlng.lng);
       setLocated(true);
       map.off("locationfound", handleLocationFound);
       map.off("locationerror", handleLocationError);
@@ -112,11 +112,6 @@ function ClickableMarker({
 export default function LeafletMap({ onSelectAddress }: LeafletMapProps) {
   const defaultCenter: L.LatLngExpression = [37.5665, 126.978];
   const [markerPosition, setMarkerPosition] = useState<L.LatLngExpression>(defaultCenter);
-  const [userLocation, setUserLocation] = useState<{
-    lat: number;
-    lng: number;
-    accuracy: number;
-  } | null>(null);
 
   const updateAddress = useCallback(async (lat: number, lng: number) => {
     try {
@@ -129,8 +124,7 @@ export default function LeafletMap({ onSelectAddress }: LeafletMapProps) {
     }
   }, [onSelectAddress]);
 
-  const handleLocate = useCallback(async (lat: number, lng: number, accuracy: number) => {
-    setUserLocation({ lat, lng, accuracy });
+  const handleLocate = useCallback(async (lat: number, lng: number) => {
     setMarkerPosition([lat, lng]); 
     await updateAddress(lat, lng);
   }, [updateAddress]);

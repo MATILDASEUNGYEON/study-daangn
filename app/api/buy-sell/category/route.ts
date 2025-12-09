@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { pool } from "@/config/database";
 
 export async function GET() {
@@ -6,7 +6,10 @@ export async function GET() {
         const result = await pool.query("SELECT * FROM items_category_enum");
 
         return NextResponse.json({
-            categories: result.rows.map(row => row.category_text)
+            categories: result.rows.map(row => ({
+                id: row.category_id,
+                text: row.category_text
+            }))
         });
     }catch(error:unknown){
         console.error("카테고리 조회 오류:", error);

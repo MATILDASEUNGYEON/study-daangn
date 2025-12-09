@@ -34,7 +34,7 @@ export default function UsedPage(){
     const dispatch = useDispatch();
     const filters = useSelector((state: RootState) => state.usedFilter);
     const userAddress = useSelector((state: RootState) => state.usedFilter.userAddress);
-    const [categories, setCategories] = useState<string[]>([]);
+    const [categories, setCategories] = useState<{ id: number; text: string }[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [dongList, setDongList] = useState<DongInfo[]>([]);
 
@@ -234,13 +234,13 @@ export default function UsedPage(){
                                 <p className="text-sm font-bold pb-3">카테고리</p>
                                 {categories.map((category) => (
                                     <Checkbox 
-                                        key={category}
-                                        id={`category-${category}`}
-                                        name={`category-${category}`}
-                                        label={category}
-                                        checked={filters.itemCategory === category}
+                                        key={category.id}
+                                        id={`category-${category.id}`}
+                                        name={`category-${category.id}`}
+                                        label={category.text}
+                                        checked={filters.itemCategory === category.text}
                                         onChange={(checked) => 
-                                            dispatch(setItemCategory(checked ? category : ""))
+                                            dispatch(setItemCategory(checked ? category.text : ""))
                                         }
                                     />
                                 ))}

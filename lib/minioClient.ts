@@ -4,11 +4,49 @@ dotenv.config();
 
 const minioClient = new Client({
   endPoint: process.env.MINIO_ENDPOINT || "localhost",
-  port: Number(process.env.PORT) || 9000,
+  port: Number(process.env.MINIO_PORT) || 9000,
   useSSL: false,
-  accessKey: process.env.ACCESS_KEY || "minioadmin",
-  secretKey: process.env.SECRET_KEY || "minioadmin",
+  accessKey: process.env.MINIO_ACCESS_KEY || "minioadmin",
+  secretKey: process.env.MINIO_SECRET_KEY || "minioadmin",
 });
+
+const IMAGE_BUCKET = process.env.MINIO_BUCKET || "images";
+
+const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "webp"];
+
+function validateFileExtension(filename: string): boolean {
+  const ext = filename.split(".").pop()?.toLowerCase() || "";
+  return ALLOWED_EXTENSIONS.includes(ext);
+}
+
+export async function uploadImage(file: File): Promise<string> {
+  if (!validateFileExtension(file.name)) {
+    throw new Error(`허용되지 않는 파일 형식입니다. (허용: ${ALLOWED_EXTENSIONS.join(", ")})`);
+  }
+
+  const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "_")}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  const metaData = {
+    "Content-Type": file.type,
+  };
+
+  const bucketExists = await minioClient.bucketExists(IMAGE_BUCKET);
+  if (!bucketExists) {
+    await minioClient.makeBucket(IMAGE_BUCKET);
+    await setBucketPublic(IMAGE_BUCKET);
+  }
+
+  await minioClient.putObject(IMAGE_BUCKET, fileName, buffer, buffer.length, metaData);
+
+  const publicUrl = process.env.MINIO_PUBLIC_URL || `http://localhost:9000`;
+  return `${publicUrl}/${IMAGE_BUCKET}/${fileName}`;
+}
+
+export async function uploadImages(files: File[]): Promise<string[]> {
+  const uploadPromises = files.map((file) => uploadImage(file));
+  return Promise.all(uploadPromises);
+}
 
 export async function checkMinioConnection(): Promise<boolean> {
   try {

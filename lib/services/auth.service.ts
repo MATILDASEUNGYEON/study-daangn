@@ -20,10 +20,8 @@ export const createUser = async (userData: CreateUserDTO): Promise<UserWithoutPa
         throw new Error("이미 가입된 이메일입니다.");
     }
 
-    // 비밀번호 해싱
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // 사용자 생성
     const result = await pool.query(
         `INSERT INTO users (username, password, email, address_main, address_dong)
             VALUES ($1, $2, $3, $4, $5)
@@ -76,3 +74,12 @@ export const loginUser = async( loginData: LoginDTO):Promise<AuthResponse>=>{
     };
 
 }
+
+export const getIdByUser = async (id: string): Promise<{ user_id: number } | null> => {
+    const result = await pool.query(`SELECT user_id from users WHERE username= $1`, [id]);
+    if (result.rows.length === 0) {
+        return null;
+    }
+    const user = result.rows[0];
+    return user;
+};
