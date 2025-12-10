@@ -8,8 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CategoryItem } from "@/components/ui/categoryitem";
 import { useSelector } from 'react-redux';
-import { RootState } from '@/lib/store'
-import {getIdByUser} from "@/lib/services/auth.service";
+import { RootState } from '@/lib/store';
 
 interface Category {
     id: number;
@@ -94,7 +93,6 @@ export default function PostPage(){
             formData.append('address_full', `${address.region} ${address.dong}`);
             formData.append('category_id', String(selectedCategory));
 
-            // 이미지 파일 추가
             files.forEach((file) => {
                 formData.append('images', file);
             });
@@ -108,7 +106,7 @@ export default function PostPage(){
 
             if (response.ok) {
                 alert('상품이 성공적으로 등록되었습니다!');
-                // 등록 성공 후 중고거래 페이지로 이동
+                
                 window.location.href = '/used';
             } else {
                 alert(result.error || '상품 등록에 실패했습니다.');

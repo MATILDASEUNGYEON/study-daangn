@@ -47,11 +47,11 @@ export async function POST(req: NextRequest) {
     }
 
     const itemData: RegisterItemDTO = {
-      title,
-      description,
-      price,
-      address_full,
-      image_url: imageUrls,
+      item_post_title: title,
+      item_post_description: description,
+      item_post_price: price,
+      item_post_location: address_full,
+      item_post_images: imageUrls,
       category_id,
     };
 

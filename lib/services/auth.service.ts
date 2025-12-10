@@ -23,8 +23,8 @@ export const createUser = async (userData: CreateUserDTO): Promise<UserWithoutPa
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     const result = await pool.query(
-        `INSERT INTO users (username, password, email, address_main, address_dong)
-            VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO users (username, password, email, address_main, address_dong,temperature)
+            VALUES ($1, $2, $3, $4, $5, 36.5)
             RETURNING username, email, address_main, address_dong, created_at, last_login`,
         [
             id,
@@ -62,7 +62,6 @@ export const loginUser = async( loginData: LoginDTO):Promise<AuthResponse>=>{
 
     const {password: _, ...userWithoutPassword} = user;
 
-    // 프론트엔드에서 사용하는 필드명(id)으로 매핑
     return {
         user: {
             id: userWithoutPassword.username,
@@ -82,4 +81,13 @@ export const getIdByUser = async (id: string): Promise<{ user_id: number } | nul
     }
     const user = result.rows[0];
     return user;
+};
+
+export const getUsernameById = async (user_id: number): Promise<string | null> => {
+    const result = await pool.query(`SELECT username from users WHERE user_id= $1`, [user_id]);
+    if (result.rows.length === 0) {
+        return null;
+    }
+    const user = result.rows[0];
+    return user.username;
 };

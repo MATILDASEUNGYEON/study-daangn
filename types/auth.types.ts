@@ -14,3 +14,15 @@ export interface AuthResponse {
 	user: UserWithoutPassword;
 	token: string;
 }
+export interface JWTPayload {
+	id: string;
+	type?: "access" | "password_reset"; // 토큰 타입
+}
+
+export interface AuthRequest extends Request {
+	user?: JWTPayload;
+}
+
+export interface PasswordResetRequest extends Request {
+	user?: JWTPayload & { type: "password_reset" };
+}

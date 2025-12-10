@@ -9,11 +9,17 @@ interface CardAddLocationProps {
     onClick?: () => void;
     className?: string;
 }
-function timeAgo(uploadTime?: string){
+function timeAgo(uploadTime?: string | null){
     if (!uploadTime) return "";
 
+    // "2025-12-10 16:30:52.298" 형식을 ISO 8601로 변환
+    const normalizedDate = uploadTime.replace(' ', 'T');
+    const uploaded = new Date(normalizedDate);
+    
+    // 유효하지 않은 날짜 체크
+    if (isNaN(uploaded.getTime())) return "";
+    
     const now = new Date();
-    const uploaded = new Date(uploadTime);
     const diffMs = now.getTime() - uploaded.getTime();
 
     const diffMinutes = Math.floor(diffMs / 1000 / 60);
@@ -27,8 +33,10 @@ function timeAgo(uploadTime?: string){
     if (diffDays < 7) return `${diffDays}일 전`;
 
     const diffWeeks = Math.floor(diffDays / 7);
-    return `${diffWeeks}주 전`;
-
+    if (diffWeeks < 4) return `${diffWeeks}주 전`;
+    
+    // 4주 이상이면 날짜 표시
+    return uploaded.toLocaleDateString('ko-KR');
 }
 export function CardAddLocation({image,title,price,location,uploadTime,onClick,className=""}:CardAddLocationProps) {
     const formattedPrice = typeof price === 'number' ? `${price.toLocaleString()}원` : price;

@@ -12,6 +12,8 @@ import {List, ListItem} from "@/components/ui/list";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import Link from "next/link";
+import {toPriceFormat} from "@/utils/format";
+
 import {
     setUserAddress,
     updateDong,
@@ -28,15 +30,19 @@ import { useUserLocation } from "@/hooks/useUserLocation";
 import { UserAddress } from "@/hooks/useUserLocation";
 import { Modal } from "@/components/ui/modal";
 import { fetchDongListByAddressMain, DongInfo } from "@/lib/services/location.service";
+import { ItemInfo, ItemStatusType } from "@/types/item.types";
+import { useCategories } from "@/hooks/useCategories";
 
 export default function UsedPage(){
     const router = useRouter();
     const dispatch = useDispatch();
     const filters = useSelector((state: RootState) => state.usedFilter);
     const userAddress = useSelector((state: RootState) => state.usedFilter.userAddress);
-    const [categories, setCategories] = useState<{ id: number; text: string }[]>([]);
+    const { categories } = useCategories();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [dongList, setDongList] = useState<DongInfo[]>([]);
+    const [items, setItems] = useState<ItemInfo[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const recommendedLocations: ListItem[] = [
         { id: 1, label: "인천광역시,연수구,송도동" },
@@ -87,16 +93,20 @@ export default function UsedPage(){
     }, [userAddress?.main]);
 
     useEffect(() => {
-        const fetchCategories = async () => {
+        const fetchItems = async () => {
             try {
-                const response = await fetch('/api/buy-sell/category');
+                setIsLoading(true);
+                const response = await fetch('/api/buy-sell/getitems');
                 const data = await response.json();
-                setCategories(data.categories);
+                console.log('아이템 목록:', data);
+                setItems(data.data || []);
             } catch (error) {
-                console.error('카테고리 조회 실패:', error);
+                console.error('아이템 조회 실패:', error);
+            } finally {
+                setIsLoading(false);
             }
         };
-        fetchCategories();
+        fetchItems();
     }, []);
     return(
         <div>
@@ -333,14 +343,23 @@ export default function UsedPage(){
                         </div>
                     </div>
                     <div className="flex flex-wrap gap-3">
-                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품1" price={0} onClick={() => router.push('/used/1')} />
-                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품2" price={0} onClick={() => router.push('/used/2')} />
-                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품3" price={0} onClick={() => router.push('/used/3')} />
-                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품4" price={0} onClick={() => router.push('/used/4')} />
-                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품5" price={0} onClick={() => router.push('/used/5')} />
-                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품6" price={0} onClick={() => router.push('/used/6')} />
-                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품7" price={0} onClick={() => router.push('/used/7')} />
-                        <Card image={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} title="상품8" price={0} onClick={() => router.push('/used/8')} />
+                        {isLoading ? (
+                            <p className="text-gray-500">로딩 중...</p>
+                        ) : items.length > 0 ? (
+                            items.map((item) => (
+                                <Card 
+                                    key={item.item_id}
+                                    image={item.item_post_images?.[0] || `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
+                                    title={item.item_post_title}
+                                    price={toPriceFormat(String(item.item_post_price))}
+                                    status={item.item_status_id as ItemStatusType}
+                                    location={item.item_post_location}
+                                    onClick={() => router.push(`/used/${item.item_id}`)}
+                                />
+                            ))
+                        ) : (
+                            <p className="text-gray-500">등록된 상품이 없습니다.</p>
+                        )}
                     </div>
                 </div>
             </div>
@@ -349,4 +368,4 @@ export default function UsedPage(){
             </div>
         </div>
     )
-}
+} 
