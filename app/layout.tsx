@@ -2,7 +2,8 @@
 
 import './globals.css'
 import { Provider } from 'react-redux'
-import { store } from '../lib/store'
+import { PersistGate } from 'redux-persist/integration/react'
+import { store, persistor } from '../lib/store'
 import { HeaderImpl } from '@/components/header'
 import { FooterImpl } from '@/components/footer'
 
@@ -11,14 +12,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <Provider store={store}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <HeaderImpl />
-            {children}
-            <FooterImpl />
-          </div>
+          <PersistGate loading={null} persistor={persistor}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <HeaderImpl />
+              {children}
+              <FooterImpl />
+            </div>
+          </PersistGate>
         </Provider>
       </body>
     </html>
   )
 }
-

@@ -28,8 +28,19 @@ export const getItemBySellerId = async (seller_id: string): Promise<ItemInfo[]> 
         [seller_id]
     );
     if(result.rows.length ===0){
-        throw new Error("아이템 조회에 실패했습니다.");
+        return [];
     }
+    return result.rows;
+};
+
+export const getItemsByUsername = async (username: string): Promise<ItemInfo[]> => {
+    const result = await pool.query(
+        `SELECT i.* FROM items i
+         INNER JOIN users u ON i.seller_id = u.user_id
+         WHERE u.username = $1
+         ORDER BY i.item_post_date DESC`,
+        [username]
+    );
     return result.rows;
 };
 

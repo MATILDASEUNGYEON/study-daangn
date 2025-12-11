@@ -1,27 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import {getItemBySellerId} from "@/lib/services/item.service";
-import {getIdByUser} from "@/lib/services/auth.service";
+import { getItemBySellerId, getItemsByUsername } from "@/lib/services/item.service";
 
 export async function GET(req: NextRequest){
     try{
         const { searchParams } = new URL(req.url);
+        const seller_id = searchParams.get('seller_id');
         const username = searchParams.get('username');
-        if(!username){
+        
+        if(!seller_id && !username){
             return NextResponse.json(
-                { error: "username가 필요합니다." },
+                { error: "seller_id 또는 username이 필요합니다." },
                 { status: 400 }
             );
         }
         
-        const seller_id = await getIdByUser(username);
-        if(!seller_id){
-            return NextResponse.json(
-                { error: "사용자를 찾을 수 없습니다." },
-                { status: 404 }
-            );
+        let items;
+        if (username) {
+            items = await getItemsByUsername(username);
+        } else {
+            items = await getItemBySellerId(seller_id!.toString());
         }
-
-        const items = await getItemBySellerId(seller_id.toString());
         return NextResponse.json({data : items});
         
     }catch(error){

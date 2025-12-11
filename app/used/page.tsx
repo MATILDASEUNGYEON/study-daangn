@@ -131,7 +131,7 @@ export default function UsedPage(){
                     <div className="flex flex-col gap-3">
                         <Input 
                             placeholder="지역이나 동네로 검색하기"
-                            icon={<img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/icons/Search_Icon.png`} alt="searchIcon" width={20} height={20} />}
+                            icon={<img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/searchIcon.png`} alt="searchIcon" width={20} height={20} />}
                         />
                         <Button variant="ghost" size="full" className="bg-amber-100">
                             <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/icons/Compose_Icon.png`} alt="composeIcon" width={20} height={20} />
@@ -342,7 +342,8 @@ export default function UsedPage(){
                             )}
                         </div>
                     </div>
-                    <div className="flex flex-wrap gap-3">
+                    
+                    <div className="grid grid-cols-4 gap-3">
                         {isLoading ? (
                             <p className="text-gray-500">로딩 중...</p>
                         ) : items.length > 0 ? (

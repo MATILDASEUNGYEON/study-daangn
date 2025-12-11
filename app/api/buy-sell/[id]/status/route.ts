@@ -2,10 +2,10 @@ import { NextResponse, NextRequest } from "next/server";
 import {updateItemStatus} from "@/lib/services/item.service";
 import {ITEM_STATUS , ItemStatusType } from "@/types/item.types";
 
-export async function PATCH(req: NextRequest,{params}:{params:{id:string}}){
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }){
     try{
-        const itemId = params.id;
-
+        const { id: itemId } = await params;
+        console.log("Received itemId:", itemId);
         const { status } : { status : ItemStatusType } = await req.json();
         if(!itemId || itemId.trim().length === 0){
             return NextResponse.json(

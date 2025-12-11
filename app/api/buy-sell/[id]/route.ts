@@ -26,7 +26,6 @@ export async function GET(req: NextRequest, { params }: Params){
             );
         }
         
-        // seller_id로 username 조회
         const sellerUsername = await getUsernameById(Number(item.seller_id));
         
         return NextResponse.json({

@@ -2,12 +2,14 @@
 import { useState, useEffect } from "react";
 import { Button } from '@/components/ui/button';
 import { CardAddLocation } from '@/components/ui/cardpluslocation';
-import { ItemInfo, ITEM_STATUS_LABEL, ItemStatusType } from "@/types/item.types";
+import { ItemInfo, ITEM_STATUS, ITEM_STATUS_LABEL, ItemStatusType } from "@/types/item.types";
 import { useCategories } from "@/hooks/useCategories";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use } from "react";
 import {toPriceFormat,getTimeAgo} from "@/utils/format";
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
 
 interface Props {
   params: Promise<{
@@ -21,11 +23,16 @@ export default function UsedDetailPage({ params }: Props) {
   const { id } = use(params);
   const router = useRouter();
   const { getCategoryName } = useCategories();
+  const user = useSelector((state: RootState) => state.auth.user);
   
   const [item, setItem] = useState<ItemInfo | null>(null);
   const [sellerItems, setSellerItems] = useState<ItemInfo[]>([]);
   const [popularItems, setPopularItems] = useState<ItemInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
+  const [isReserving, setIsReserving] = useState(false);
 
   const temp = 36.5; 
 
@@ -35,7 +42,71 @@ export default function UsedDetailPage({ params }: Props) {
     return "🥵";
   };
 
-  // 상품 상세 조회
+  useEffect(() => {
+    const fetchLikeStatus = async () => {
+      try {
+        const url = user?.id 
+          ? `/api/buy-sell/${id}/like?username=${user.id}`
+          : `/api/buy-sell/${id}/like`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.success) {
+          setIsLiked(data.data.liked);
+          setLikeCount(data.data.likeCount);
+        }
+      } catch (error) {
+        console.error('좋아요 상태 조회 실패:', error);
+      }
+    };
+    
+    if (id) {
+      fetchLikeStatus();
+    }
+  }, [id, user?.id]);
+
+  const handleLikeToggle = async () => {
+    if (!user?.id) {
+      alert('로그인이 필요합니다.');
+      router.push('/login');
+      return;
+    }
+
+    setIsLikeLoading(true);
+    
+    const prevLiked = isLiked;
+    const prevCount = likeCount;
+    setIsLiked(!isLiked);
+    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+
+    try {
+      const response = await fetch(`/api/buy-sell/${id}/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: user.id }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsLiked(data.data.liked);
+        setLikeCount(data.data.likeCount);
+      } else {
+        setIsLiked(prevLiked);
+        setLikeCount(prevCount);
+        alert(data.error || '좋아요 처리에 실패했습니다.');
+      }
+    } catch (error) {
+      setIsLiked(prevLiked);
+      setLikeCount(prevCount);
+      console.error('좋아요 처리 오류:', error);
+      alert('좋아요 처리 중 오류가 발생했습니다.');
+    } finally {
+      setIsLikeLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchItem = async () => {
       try {
@@ -44,24 +115,22 @@ export default function UsedDetailPage({ params }: Props) {
         const data = await response.json();
         
         if (data.data) {
-          console.log('API 응답 data.data:', data.data);
-          console.log('post_at 값:', data.data.post_at, '타입:', typeof data.data.post_at);
           setItem(data.data);
           
-        //   if (data.data.seller_id) {
-        //     const sellerResponse = await fetch(`/api/buy-sell/getitems`);
-        //     const sellerData = await sellerResponse.json();
-        //     const otherItems = (sellerData.data || [])
-        //       .filter((i: ItemInfo) => i.seller_id === data.data.seller_id && i.item_id !== data.data.item_id)
-        //       .slice(0, 4);
-        //     setSellerItems(otherItems);
+          if (data.data.seller_id) {
+            const sellerResponse = await fetch(`/api/buy-sell/myitems?seller_id=${data.data.seller_id}`);
+            const sellerData = await sellerResponse.json();
+            console.log('Seller Items:', sellerData);
+            const otherItems = (sellerData.data || [])
+              .filter((i: ItemInfo) => i.seller_id === data.data.seller_id && i.item_id !== data.data.item_id)
+              .slice(0, 4);
+            setSellerItems(otherItems);
             
-        //     // 인기 매물 (판매자 제외)
-        //     const popular = (sellerData.data || [])
-        //       .filter((i: ItemInfo) => i.seller_id !== data.data.seller_id)
-        //       .slice(0, 8);
-        //     setPopularItems(popular);
-        //   }
+            const popular = (sellerData.data || [])
+              .filter((i: ItemInfo) => i.seller_id !== data.data.seller_id)
+              .slice(0, 8);
+            // setPopularItems(popular);
+          }
         }
       } catch (error) {
         console.error('아이템 조회 실패:', error);
@@ -189,22 +258,80 @@ export default function UsedDetailPage({ params }: Props) {
                         <p>•</p>
                         <div className="flex gap-1">
                             <p className="text-xs text-gray-300 ">관심</p>
-                            <p className="text-xs text-gray-400 ">{item.item_post_likes_count || 0}</p>
+                            <p className="text-xs text-gray-400 ">{likeCount}</p>
                         </div>
-                        <p>•</p>
+                        {/* <p>•</p>
                         <div className="flex gap-1">
                             <p className="text-xs text-gray-300 ">조회</p>
                             <p className="text-xs text-gray-400 ">{item.item_post_views_count || 0}</p>
-                        </div>
+                        </div> */}
                     </div>
-                    <Button size="lg" variant="ghost" className="mt-6 w-full bg-amber-500 text-white hover:bg-amber-600"> 판매자에게 채팅보내기 </Button>
+                    <div className="flex gap-4">
+                        <Button 
+                            size="lg" 
+                            variant="ghost" 
+                            className="mt-6 w-7/8 bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50"
+                            onClick={async () => {
+                                if (!user?.id) {
+                                    alert('로그인이 필요합니다.');
+                                    router.push('/login');
+                                    return;
+                                }
+                                if (item?.item_status_id === ITEM_STATUS.RESERVED) {
+                                    alert('이미 예약중인 상품입니다.');
+                                    return;
+                                }
+                                if (item?.item_status_id === ITEM_STATUS.SOLD) {
+                                    alert('이미 판매완료된 상품입니다.');
+                                    return;
+                                }
+                                
+                                setIsReserving(true);
+                                try {
+                                    const response = await fetch(`/api/buy-sell/${id}/status`, {
+                                        method: 'PATCH',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ status: ITEM_STATUS.RESERVED }),
+                                    });
+                                    
+                                    if (response.ok) {
+                                        alert('예약이 완료되었습니다!');
+                                        setItem(prev => prev ? { ...prev, item_status_id: ITEM_STATUS.RESERVED } : null);
+                                    } else {
+                                        const data = await response.json();
+                                        alert(data.error || '예약 처리에 실패했습니다.');
+                                    }
+                                } catch (error) {
+                                    console.error('예약 처리 오류:', error);
+                                    alert('예약 처리 중 오류가 발생했습니다.');
+                                } finally {
+                                    setIsReserving(false);
+                                }
+                            }}
+                            disabled={isReserving || item?.item_status_id !== ITEM_STATUS.SELLING}
+                        > 
+                            {isReserving ? '처리중...' : item?.item_status_id === ITEM_STATUS.SELLING ? '구매하고싶어요!' : ITEM_STATUS_LABEL[item?.item_status_id as ItemStatusType]} 
+                        </Button>
+                        <Button 
+                            size="lg" 
+                            variant="ghost" 
+                            className={`mt-6 w-1/8 ${isLiked ? 'bg-red-500 hover:bg-red-600' : 'bg-amber-500 hover:bg-amber-600'} text-white transition-colors`}
+                            onClick={handleLikeToggle}
+                            disabled={isLikeLoading}
+                        > 
+                            {isLiked ? '❤️' : '🤍'} 
+                        </Button>
+                    </div>
+                    
                 </div>
             </div>
         </div>
         <div className="w-full h-px bg-gray-100 my-4"></div>
         <div className="flex justify-between">
             <p className="text-xl">`{item.seller_username || item.seller_id}` 의 판매물품</p>
-            <a className="text-sm text-amber-500 after:content-['_>']" href="#">더 구경하기</a>
+            <Link className="text-sm text-amber-500 after:content-['_>']" href="/used">더 구경하기</Link>
         </div>
         <div className="grid grid-cols-4 gap-6 mt-4">
             {sellerItems.length > 0 ? (
@@ -213,7 +340,7 @@ export default function UsedDetailPage({ params }: Props) {
                         key={sellerItem.item_id}
                         image={sellerItem.item_post_images?.[0] || `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
                         title={sellerItem.item_post_title}
-                        price={sellerItem.item_post_price}
+                        price={`${toPriceFormat(String(sellerItem.item_post_price))} 원`}
                         location={sellerItem.item_post_location}
                         uploadTime={sellerItem.item_post_date}
                         onClick={() => router.push(`/used/${sellerItem.item_id}`)}
@@ -226,7 +353,7 @@ export default function UsedDetailPage({ params }: Props) {
         <div className="w-full h-px bg-gray-100 my-4"></div>
         <div className="flex justify-between">
             <p className="text-xl">인기매물</p>
-            <a className="text-sm text-amber-500 after:content-['_>']" href="/used">더 구경하기</a>
+            <Link className="text-sm text-amber-500 after:content-['_>']" href="/used">더 구경하기</Link>
         </div>
         <div className="grid grid-cols-4 grid-rows-2 gap-6 mt-4">
             {popularItems.length > 0 ? (
@@ -235,7 +362,7 @@ export default function UsedDetailPage({ params }: Props) {
                         key={popItem.item_id}
                         image={popItem.item_post_images?.[0] || `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
                         title={popItem.item_post_title}
-                        price={popItem.item_post_price}
+                        price={`${toPriceFormat(String(popItem.item_post_price))} 원`}
                         location={popItem.item_post_location}
                         uploadTime={popItem.item_post_date}
                         onClick={() => router.push(`/used/${popItem.item_id}`)}

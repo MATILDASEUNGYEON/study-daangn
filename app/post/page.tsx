@@ -3,6 +3,7 @@
 import React from "react"
 import { useState,useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ const LeafletMap = dynamic(() => import("@/components/mapLeaflet"), {
 });
 
 export default function PostPage(){
+    const router = useRouter();
     const [address, setAddress] = useState<{ region: string; dong: string } | null>(null);
     const [price, setPrice] = useState<string>("");
     const [isShare, setIsShare] = useState<boolean>(false);
@@ -44,7 +46,6 @@ export default function PostPage(){
             fetchCategories();
         }, []);
 
-    // 파일 선택 핸들러
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = e.target.files;
         if (selectedFiles) {
@@ -57,9 +58,7 @@ export default function PostPage(){
         }
     };
 
-    // 등록하기 핸들러
     const handleSubmit = async () => {
-        // 유효성 검사
         if (!title.trim()) {
             alert('제목을 입력해주세요.');
             return;
@@ -107,7 +106,7 @@ export default function PostPage(){
             if (response.ok) {
                 alert('상품이 성공적으로 등록되었습니다!');
                 
-                window.location.href = '/used';
+                router.push('/used');
             } else {
                 alert(result.error || '상품 등록에 실패했습니다.');
             }

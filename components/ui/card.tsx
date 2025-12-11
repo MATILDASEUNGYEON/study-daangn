@@ -35,7 +35,7 @@ export function Card({ image, title, price, status, location, onClick, className
       onClick={onClick}
     >
       <div className="relative">
-        <img src={image} alt={title} className="w-full h-60 object-cover rounded-t-md"/>
+        <img src={image} alt={title} className="w-full h-50 object-cover rounded-t-md p-2"/>
         {status && (
           <span className={`absolute top-2 left-2 px-2 py-1 text-xs text-white rounded ${getStatusStyle(status)}`}>
             {ITEM_STATUS_LABEL[status]}
