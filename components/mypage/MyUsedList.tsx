@@ -5,12 +5,14 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { ItemInfo, ITEM_STATUS, ITEM_STATUS_LABEL, ItemStatusType } from '@/types/item.types';
 import {toPriceFormat,getTimeAgo} from '@/utils/format';
+import {useRouter} from 'next/navigation';
 
 export default function MyUsedList() {
     const user = useSelector((state: RootState) => state.auth.user);
     const [items, setItems] = useState<ItemInfo[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchMyItems = async () => {
@@ -130,8 +132,10 @@ export default function MyUsedList() {
                         key={item.item_id} 
                         className="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:shadow-md transition-shadow"
                     >
-                        {/* 이미지 */}
-                        <div className="w-24 h-24 flex-shrink-0">
+                        <div 
+                            className="w-24 h-24 flex-shrink-0 cursor-pointer"
+                            onClick={() => router.push(`/used/${item.item_id}`)}
+                        >
                             {item.item_post_images && item.item_post_images.length > 0 ? (
                                 <img 
                                     src={item.item_post_images[0]} 
@@ -145,9 +149,13 @@ export default function MyUsedList() {
                             )}
                         </div>
 
-                        {/* 상품 정보 */}
                         <div className="flex-grow">
-                            <h3 className="font-semibold text-lg">{item.item_post_title}</h3>
+                            <h3 
+                                className="font-semibold text-lg cursor-pointer hover:text-orange-500"
+                                onClick={() => router.push(`/used/${item.item_id}`)}
+                            >
+                                {item.item_post_title}
+                            </h3>
                             <p className="text-orange-500 font-bold">{toPriceFormat(String(item.item_post_price))}원</p>
                             <p className="text-sm text-gray-500">{item.item_post_location}</p>
                             <p className="text-xs text-gray-400">{getTimeAgo(item.item_post_date)}</p>

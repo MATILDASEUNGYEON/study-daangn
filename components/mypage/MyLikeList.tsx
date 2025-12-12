@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { ItemInfo, ITEM_STATUS_LABEL, ItemStatusType } from '@/types/item.types';
+import {toPriceFormat} from '@/utils/format';
 import { useRouter } from 'next/navigation';
 
 export default function MyLikeList() {
@@ -63,19 +64,15 @@ export default function MyLikeList() {
 
     const getStatusBadgeColor = (statusId: number) => {
         switch (statusId) {
-            case 1: // SELLING
+            case 1: 
                 return 'bg-green-100 text-green-800';
-            case 2: // RESERVED
+            case 2: 
                 return 'bg-yellow-100 text-yellow-800';
-            case 3: // SOLD
+            case 3:
                 return 'bg-gray-100 text-gray-800';
             default:
                 return 'bg-gray-100 text-gray-800';
         }
-    };
-
-    const formatPrice = (price: number) => {
-        return price.toLocaleString('ko-KR') + '원';
     };
 
     const handleItemClick = (itemId: number) => {
@@ -154,7 +151,7 @@ export default function MyLikeList() {
                                     {ITEM_STATUS_LABEL[item.item_status_id as ItemStatusType] || '알 수 없음'}
                                 </span>
                             </div>
-                            <p className="text-orange-500 font-bold mb-1">{formatPrice(item.item_post_price)}</p>
+                            <p className="text-orange-500 font-bold mb-1">{toPriceFormat(String(item.item_post_price))}</p>
                             <p className="text-sm text-gray-500 mb-3">{item.item_post_location}</p>
                             
                             <button
