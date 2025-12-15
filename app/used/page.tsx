@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import Link from "next/link";
 import {toPriceFormat} from "@/utils/format";
-
 import {
     setUserAddress,
     updateDong,
@@ -33,11 +32,19 @@ import { fetchDongListByAddressMain, DongInfo } from "@/lib/services/location.se
 import { ItemInfo, ItemStatusType } from "@/types/item.types";
 import { useCategories } from "@/hooks/useCategories";
 
+import Image from "next/image";
+import locationIcon from "@/assets/icons/pingIcon.png"
+import searchIcon from "@/assets/icons/searchIcon.png"
+import composeIcon from "@/assets/icons/composeIcon.png"
+import plusIcon from "@/assets/icons/plusIcon.png"
+import subfooter from "@/assets/images/subfooter.png";
+
 export default function UsedPage(){
     const router = useRouter();
     const dispatch = useDispatch();
     const filters = useSelector((state: RootState) => state.usedFilter);
     const userAddress = useSelector((state: RootState) => state.usedFilter.userAddress);
+    const isLogin = useSelector((state: RootState) => state.auth.isLogin);
     const { categories } = useCategories();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [dongList, setDongList] = useState<DongInfo[]>([]);
@@ -115,7 +122,7 @@ export default function UsedPage(){
                     className="relative flex items-start self-start bg-black rounded-full px-3 py-2 cursor-pointer h-12"
                     onClick={() => setIsModalOpen(true)}
                 >
-                    <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/locationIcon.png`} alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
+                    <Image src={locationIcon} alt="locationIcon" width={20} height={20} className="object-contain mr-2 pointer-events-none items-center self-center"/>
                     <span className="self-center text-white text-sm pr-5">{userAddress?.dong || "위치 선택"}</span>
                     <ChevronDownIcon
                         aria-hidden="true"
@@ -131,10 +138,10 @@ export default function UsedPage(){
                     <div className="flex flex-col gap-3">
                         <Input 
                             placeholder="지역이나 동네로 검색하기"
-                            icon={<img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/searchIcon.png`} alt="searchIcon" width={20} height={20} />}
+                            icon={<Image src={searchIcon} alt="searchIcon" width={20} height={20} className="object-contain"/>}
                         />
                         <Button variant="ghost" size="full" className="bg-amber-100">
-                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/icons/Compose_Icon.png`} alt="composeIcon" width={20} height={20} />
+                            <Image src={composeIcon} alt="composeIcon" width={20} height={20} className="object-contain mr-2"/>
                             <p className="text-amber-600">현재 내 위치 사용하기</p>
                         </Button>
                         <p className="text-xs text-blue-500 font-bold">추천</p>
@@ -160,7 +167,7 @@ export default function UsedPage(){
                         onChange={(e) => dispatch(setKeyword(e.target.value))}
                         />
                         <button className="btn btn-circle text-white">
-                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/searchIcon.png`} alt="searchIcon" width={30} height={30} className="object-contain"/>
+                            <Image src={searchIcon} alt="searchIcon" width={30} height={30} className="object-contain"/>
                         </button>
                     </div>
 
@@ -189,10 +196,16 @@ export default function UsedPage(){
                     <Button 
                         variant="ghost"
                         className="bg-amber-500 hover:bg-amber-600 ml-auto"
-                        onClick={() => router.push('/post')}
+                        onClick={() => {
+                            if (!isLogin) {
+                                alert('로그인이 필요한 서비스입니다.');
+                                return;
+                            }
+                            router.push('/used/add');
+                        }}
                     >
                         <div className= "flex">
-                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/plusIcon.png`} alt="plusIcon" className='size-5 mr-2'/>
+                            <Image src={plusIcon} alt="plusIcon" width={20} height={20} className="object-contain mr-2"/>
                             <p className="text-white">글쓰기</p>
                         </div>
                     </Button>
@@ -350,11 +363,11 @@ export default function UsedPage(){
                             items.map((item) => (
                                 <Card 
                                     key={item.item_id}
-                                    image={item.item_post_images?.[0] || `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
-                                    title={item.item_post_title}
-                                    price={toPriceFormat(String(item.item_post_price))}
+                                    image={item.item_images?.[0] || `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
+                                    title={item.item_title}
+                                    price={toPriceFormat(String(item.item_price))}
                                     status={item.item_status_id as ItemStatusType}
-                                    location={item.item_post_location}
+                                    location={item.item_location}
                                     onClick={() => router.push(`/used/${item.item_id}`)}
                                 />
                             ))
@@ -365,7 +378,7 @@ export default function UsedPage(){
                 </div>
             </div>
             <div className="w-full mt-10">
-                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/subfooter.png`} alt="subfooter" className="w-full" />
+                <Image src={subfooter} alt="subfooter" className="w-full" />
             </div>
         </div>
     )

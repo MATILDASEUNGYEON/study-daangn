@@ -6,6 +6,7 @@ import { RootState } from '@/lib/store';
 import { ItemInfo, ITEM_STATUS_LABEL, ItemStatusType } from '@/types/item.types';
 import {toPriceFormat} from '@/utils/format';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function MyLikeList() {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -120,16 +121,18 @@ export default function MyLikeList() {
                         key={item.item_id} 
                         className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
                     >
-                        {/* 이미지 */}
                         <div 
                             className="w-full h-48 cursor-pointer"
                             onClick={() => handleItemClick(item.item_id)}
                         >
-                            {item.item_post_images && item.item_post_images.length > 0 ? (
-                                <img 
-                                    src={item.item_post_images[0]} 
-                                    alt={item.item_post_title}
+                            {item.item_images && item.item_images.length > 0 ? (
+                                <Image 
+                                    src={item.item_images[0]} 
+                                    alt={item.item_title}
+                                    width={50}
+                                    height={50}
                                     className="w-full h-full object-cover"
+                                    unoptimized={typeof item.item_images?.[0] === 'string'}
                                 />
                             ) : (
                                 <div className="w-full h-full bg-gray-200 flex items-center justify-center">
@@ -145,14 +148,14 @@ export default function MyLikeList() {
                                     className="font-semibold text-lg cursor-pointer hover:text-orange-500 truncate flex-1"
                                     onClick={() => handleItemClick(item.item_id)}
                                 >
-                                    {item.item_post_title}
+                                    {item.item_title}
                                 </h3>
                                 <span className={`px-2 py-1 rounded-full text-xs font-medium ml-2 ${getStatusBadgeColor(item.item_status_id)}`}>
                                     {ITEM_STATUS_LABEL[item.item_status_id as ItemStatusType] || '알 수 없음'}
                                 </span>
                             </div>
-                            <p className="text-orange-500 font-bold mb-1">{toPriceFormat(String(item.item_post_price))}</p>
-                            <p className="text-sm text-gray-500 mb-3">{item.item_post_location}</p>
+                            <p className="text-orange-500 font-bold mb-1">{toPriceFormat(String(item.item_price))}</p>
+                            <p className="text-sm text-gray-500 mb-3">{item.item_location}</p>
                             
                             <button
                                 onClick={() => handleUnlike(item.item_id)}

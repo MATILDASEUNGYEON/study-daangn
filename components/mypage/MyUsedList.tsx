@@ -6,6 +6,7 @@ import { RootState } from '@/lib/store';
 import { ItemInfo, ITEM_STATUS, ITEM_STATUS_LABEL, ItemStatusType } from '@/types/item.types';
 import {toPriceFormat,getTimeAgo} from '@/utils/format';
 import {useRouter} from 'next/navigation';
+import Image from 'next/image';
 
 export default function MyUsedList() {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -136,10 +137,13 @@ export default function MyUsedList() {
                             className="w-24 h-24 flex-shrink-0 cursor-pointer"
                             onClick={() => router.push(`/used/${item.item_id}`)}
                         >
-                            {item.item_post_images && item.item_post_images.length > 0 ? (
-                                <img 
-                                    src={item.item_post_images[0]} 
-                                    alt={item.item_post_title}
+                            {item.item_images && item.item_images.length > 0 ? (
+                                <Image 
+                                    src={item.item_images[0]} 
+                                    alt={item.item_title}
+                                    width={50}
+                                    height={50}
+                                    unoptimized={typeof item.item_images?.[0] === 'string'}
                                     className="w-full h-full object-cover rounded-lg"
                                 />
                             ) : (
@@ -154,11 +158,11 @@ export default function MyUsedList() {
                                 className="font-semibold text-lg cursor-pointer hover:text-orange-500"
                                 onClick={() => router.push(`/used/${item.item_id}`)}
                             >
-                                {item.item_post_title}
+                                {item.item_title}
                             </h3>
-                            <p className="text-orange-500 font-bold">{toPriceFormat(String(item.item_post_price))}원</p>
-                            <p className="text-sm text-gray-500">{item.item_post_location}</p>
-                            <p className="text-xs text-gray-400">{getTimeAgo(item.item_post_date)}</p>
+                            <p className="text-orange-500 font-bold">{toPriceFormat(String(item.item_price))}원</p>
+                            <p className="text-sm text-gray-500">{item.item_location}</p>
+                            <p className="text-xs text-gray-400">{getTimeAgo(item.item_date)}</p>
                         </div>
 
                         <div className="flex flex-col items-end gap-2">

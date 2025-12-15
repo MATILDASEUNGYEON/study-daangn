@@ -1,8 +1,15 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import {useEffect, useState} from 'react'
 import {Select} from '@/components/ui/select'
+import locationIcon from "@/assets/icons/locationIcon_black.png"
+import searchIcon from "@/assets/icons/searchIcon.png"
+import usedIcon from "@/assets/icons/itemsIcon.png"
+import storageIcon from "@/assets/icons/storageIcon.png"
+import lifeIcon from "@/assets/icons/lifeIcon.png"
+
 const words=["중고거래","알바","동네생활","채팅하기","당근페이","당근마켓 비즈니스"]
 
 export default function Home() {
@@ -20,7 +27,7 @@ export default function Home() {
   return (
     <div className='flex justify-center flex-col items-center gap-6 mt-20'>
       <div className="flex p-6">
-        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/icons/location_Icon_black.png`} alt="logo" width={30} height={30} className="object-contain"/>
+        <Image src={locationIcon} alt="locationIcon" width={30} height={30} className="object-contain"/>
         <span
         key={index}
         className="
@@ -57,7 +64,7 @@ export default function Home() {
             />
             <button className="btn btn-circle text-white">
               
-              <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/searchIcon.png`} alt="searchIcon" width={30} height={30} className="object-contain"/>
+              <Image src={searchIcon} alt="searchIcon" width={30} height={30} className="object-contain"/>
             </button>
           </div>
 
@@ -82,7 +89,7 @@ export default function Home() {
           className='w-30 h-25 bg-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow'
           onClick={() => router.push('/used')}
         >
-          <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/itemsIcon.png`} alt="itemsIcon" width={60} height={60} className="object-contain p-4"/>
+          <Image src={usedIcon} alt="usedIcon" width={60} height={60} className="object-contain p-4"/>
           <div className='px-4 pb-4'>
             <h2 className='font-bold text-lg'>중고거래</h2>
           </div>
@@ -91,7 +98,7 @@ export default function Home() {
           className='w-30 h-25 bg-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow'
           onClick={() => router.push('/jobs')}
         >
-          <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/storageIcon.png`} alt="storageIcon" width={63} height={63} className="object-contain p-4"/>
+          <Image src={storageIcon} alt="storageIcon" width={60} height={60} className="object-contain p-4"/>
           <div className='px-4 pb-4'>
             <h2 className='font-bold text-lg'>알바</h2>
           </div>
@@ -100,7 +107,7 @@ export default function Home() {
           className='w-30 h-25 bg-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow'
           onClick={() => router.push('/life')}
         >
-          <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/lifeIcon.png`} alt="lifeIcon" width={60} height={60} className="object-contain p-4"/>
+          <Image src={lifeIcon} alt="lifeIcon" width={60} height={60} className="object-contain p-4"/>
           <div className='px-4 pb-4'>
             <h2 className='font-bold text-lg'>동네생활</h2>
           </div>

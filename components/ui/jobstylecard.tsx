@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Tag } from "./tags";
+import Image from "next/image";
 
 interface JobStyleCardProps {
   title: string;
@@ -49,7 +50,7 @@ export function JobStyleCard({
         </div>
       </div>
       <div className="w-1/5 flex justify-center">
-        <img src={image} alt={title} className="size-40 object-cover m-3 rounded-md"/>
+        <Image src={image} alt={title} width={160} height={160} unoptimized={typeof image === 'string'} className="size-40 object-cover m-3 rounded-md"/>
       </div>
     </div>
   );

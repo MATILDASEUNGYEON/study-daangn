@@ -56,7 +56,7 @@ export async function PUT(req: NextRequest, { params }: Params){
             );
         }
 
-        if(!updateData.item_post_title && !updateData.item_post_description && !updateData.item_post_price && !updateData.item_post_location && !updateData.category_id && !updateData.item_post_images){
+        if(!updateData.item_title && !updateData.item_description && !updateData.item_price && !updateData.item_location && !updateData.category_id && !updateData.item_images){
             return NextResponse.json(
                 { error: "수정할 데이터가 필요합니다." },
                 { status: 400 }

@@ -10,6 +10,10 @@ import { use } from "react";
 import {toPriceFormat,getTimeAgo} from "@/utils/format";
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
+import Image from "next/image";
+import sampleImage from "@/assets/images/sampleImage.png";
+import profileIcon from "@/assets/icons/profileIcon.png";
+import subfooter from "@/assets/images/subfooter.png";
 
 interface Props {
   params: Promise<{
@@ -166,30 +170,36 @@ export default function UsedDetailPage({ params }: Props) {
             <p> {'>'} </p>
             <p><Link href="/used">중고거래</Link></p>
             <p> {'>'} </p>
-            <p>{item.item_post_title}</p>
+            <p>{item.item_title}</p>
         </div>
 
         <div className="flex pt-3">
             <div className="w-2/5 pr-4">
                 <div className="w-full p-4">
-                    <img
-                    src={item.item_post_images?.[0] || `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
-                    alt={item.item_post_title}
-                    className="w-full h-96 object-cover rounded-md"
-                    />
+                    <div className="relative w-full h-96">
+                        <Image
+                        src={item.item_images?.[0] || sampleImage}
+                        alt={item.item_title}
+                        fill
+                        className="object-cover rounded-md"
+                        unoptimized={typeof item.item_images?.[0] === 'string'}
+                        />
+                    </div>
 
                     <div className="flex justify-between mt-4">
                         <div className="flex items-center">
-                            <img
-                            src={`${process.env.NEXT_PUBLIC_MINIO_URL}/profileIcon.png`}
+                            <Image
+                            src={profileIcon}
                             alt="profile"
+                            width={48}
+                            height={48}
                             className="w-12 h-12 rounded-full"
                             />
 
                             <div className="flex flex-col justify-center ml-3">
                             <p className="text-lg font-bold leading-tight">{item.seller_username || item.seller_id}</p>
                             <p className="text-sm text-gray-600 leading-tight">
-                                {item.item_post_location}
+                                {item.item_location}
                             </p>
                             </div>
                         </div>
@@ -239,15 +249,15 @@ export default function UsedDetailPage({ params }: Props) {
                             {ITEM_STATUS_LABEL[item.item_status_id as ItemStatusType]}
                         </span>
                     </div>
-                    <p className="text-2xl font-bold mb-4">{item.item_post_title}</p>
+                    <p className="text-2xl font-bold mb-4">{item.item_title}</p>
                     <div className='flex gap-4 items-center'>
                         <p className="text-sm underline text-gray-300">{getCategoryName(item.category_id)}</p>
-                        <p className='text-sm text-gray-300'>{getTimeAgo(item.item_post_date)}</p>
+                        <p className='text-sm text-gray-300'>{getTimeAgo(item.item_date)}</p>
                     </div>
                     <p className="text-3xl font-bold my-6">
-                        {item.item_post_price === 0 ? '나눔' : `₩ ${toPriceFormat(String(item.item_post_price))}`}
+                        {item.item_price === 0 ? '나눔' : `₩ ${toPriceFormat(String(item.item_price))}`}
                     </p>
-                    <p className="text-lg h-40 whitespace-pre-wrap">{item.item_post_description}</p>
+                    <p className="text-lg h-40 whitespace-pre-wrap">{item.item_description}</p>
                 </div>
                 <div className="flex-flow mt-10">
                     <div className="flex gap-2 items-center">
@@ -263,7 +273,7 @@ export default function UsedDetailPage({ params }: Props) {
                         {/* <p>•</p>
                         <div className="flex gap-1">
                             <p className="text-xs text-gray-300 ">조회</p>
-                            <p className="text-xs text-gray-400 ">{item.item_post_views_count || 0}</p>
+                            <p className="text-xs text-gray-400 ">{item.item_views_count || 0}</p>
                         </div> */}
                     </div>
                     <div className="flex gap-4">
@@ -338,11 +348,11 @@ export default function UsedDetailPage({ params }: Props) {
                 sellerItems.map((sellerItem) => (
                     <CardAddLocation 
                         key={sellerItem.item_id}
-                        image={sellerItem.item_post_images?.[0] || `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
-                        title={sellerItem.item_post_title}
-                        price={`${toPriceFormat(String(sellerItem.item_post_price))} 원`}
-                        location={sellerItem.item_post_location}
-                        uploadTime={sellerItem.item_post_date}
+                        image={sellerItem.item_images?.[0] || `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
+                        title={sellerItem.item_title}
+                        price={`${toPriceFormat(String(sellerItem.item_price))} 원`}
+                        location={sellerItem.item_location}
+                        uploadTime={sellerItem.item_date}
                         onClick={() => router.push(`/used/${sellerItem.item_id}`)}
                     />
                 ))
@@ -360,11 +370,11 @@ export default function UsedDetailPage({ params }: Props) {
                 popularItems.map((popItem) => (
                     <CardAddLocation 
                         key={popItem.item_id}
-                        image={popItem.item_post_images?.[0] || `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
-                        title={popItem.item_post_title}
-                        price={`${toPriceFormat(String(popItem.item_post_price))} 원`}
-                        location={popItem.item_post_location}
-                        uploadTime={popItem.item_post_date}
+                        image={popItem.item_images?.[0] || `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
+                        title={popItem.item_title}
+                        price={`${toPriceFormat(String(popItem.item_price))} 원`}
+                        location={popItem.item_location}
+                        uploadTime={popItem.item_date}
                         onClick={() => router.push(`/used/${popItem.item_id}`)}
                     />
                 ))
@@ -373,7 +383,7 @@ export default function UsedDetailPage({ params }: Props) {
             )}
         </div>
         <div className="w-full mt-10">
-            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/subfooter.png`} alt="subfooter" className="w-full" />
+            <Image src={subfooter} alt="subfooter" className="w-full" />
         </div>
     </div>
   );

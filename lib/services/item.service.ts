@@ -38,7 +38,7 @@ export const getItemsByUsername = async (username: string): Promise<ItemInfo[]> 
         `SELECT i.* FROM items i
          INNER JOIN users u ON i.seller_id = u.user_id
          WHERE u.username = $1
-         ORDER BY i.item_post_date DESC`,
+         ORDER BY i.item_date DESC`,
         [username]
     );
     return result.rows;
@@ -71,25 +71,25 @@ export const updateItem = async (item_id:number, updateData: UpdateDTO) : Promis
     const values = [];
     let paramsIndex = 1;
 
-    if(updateData.item_post_title !== undefined){
-        fields.push(`item_post_title = $${paramsIndex++}`);
-        values.push(updateData.item_post_title);
+    if(updateData.item_title !== undefined){
+        fields.push(`item_title = $${paramsIndex++}`);
+        values.push(updateData.item_title);
     }
-    if(updateData.item_post_description !== undefined){
-        fields.push(`item_post_description = $${paramsIndex++}`);
-        values.push(updateData.item_post_description);
+    if(updateData.item_description !== undefined){
+        fields.push(`item_description = $${paramsIndex++}`);
+        values.push(updateData.item_description);
     }
-    if(updateData.item_post_price !== undefined){
-        fields.push(`item_post_price = $${paramsIndex++}`);
-        values.push(updateData.item_post_price);
+    if(updateData.item_price !== undefined){
+        fields.push(`item_price = $${paramsIndex++}`);
+        values.push(updateData.item_price);
     }
-    if(updateData.item_post_location !== undefined){
-        fields.push(`item_post_location = $${paramsIndex++}`);
-        values.push(updateData.item_post_location);
+    if(updateData.item_location !== undefined){
+        fields.push(`item_location = $${paramsIndex++}`);
+        values.push(updateData.item_location);
     }
-    if(updateData.item_post_images !== undefined){
-        fields.push(`item_post_images = $${paramsIndex++}`);
-        values.push(updateData.item_post_images);
+    if(updateData.item_images !== undefined){
+        fields.push(`item_images = $${paramsIndex++}`);
+        values.push(updateData.item_images);
     }
     if(updateData.category_id !== undefined){
         fields.push(`category_id = $${paramsIndex++}`);

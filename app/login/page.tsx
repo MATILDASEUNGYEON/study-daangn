@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '@/lib/authSlice';
 import Link from 'next/link';
+import Image from 'next/image';
+import logo from "@/assets/icons/logo.png";
+import subfooter from "@/assets/images/subfooter.png";
 
 export default function Login() {
   const router = useRouter();
@@ -40,13 +43,11 @@ export default function Login() {
         throw new Error(data.message || '로그인에 실패했습니다.');
       }
 
-      // Redux에 로그인 상태 저장
       dispatch(loginSuccess({
         user: data.user,
         token: data.token,
       }));
 
-      // 메인 페이지로 이동
       router.push('/');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : '로그인에 실패했습니다.');
@@ -59,7 +60,7 @@ export default function Login() {
     <div>
         <div className="flex flex-col items-center pt-20 pb-30 px-4">
             <div className="flex flex-col items-center mb-10">
-                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/logo.png`} alt="logo" width={200} height={60} className="object-contain"/>
+                <Image src={logo} alt="logo" width={200} height={60} className="object-contain"/>
             </div>
 
             <div className="w-full max-w-md rounded-xl border border-gray-300 p-8 shadow-sm">
@@ -119,7 +120,7 @@ export default function Login() {
             </div>
         </div>
         <div className="w-full mt-10">
-            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/subfooter.png`} alt="subfooter" className="w-full" />
+            <Image src={subfooter} alt="subfooter" className="w-full" />
         </div>
     </div>
   );

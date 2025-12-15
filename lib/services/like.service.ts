@@ -26,7 +26,7 @@ export const toggleLike = async (user_id: number, item_id: number): Promise<{ li
                 [user_id, item_id]
             );
             await client.query(
-                `UPDATE items SET item_post_likes_count = GREATEST(COALESCE(item_post_likes_count, 0) - 1, 0) WHERE item_id = $1`,
+                `UPDATE items SET item_likes_count = GREATEST(COALESCE(item_likes_count, 0) - 1, 0) WHERE item_id = $1`,
                 [item_id]
             );
             liked = false;
@@ -37,14 +37,14 @@ export const toggleLike = async (user_id: number, item_id: number): Promise<{ li
                 [user_id, item_id]
             );
             await client.query(
-                `UPDATE items SET item_post_likes_count = COALESCE(item_post_likes_count, 0) + 1 WHERE item_id = $1`,
+                `UPDATE items SET item_likes_count = COALESCE(item_likes_count, 0) + 1 WHERE item_id = $1`,
                 [item_id]
             );
             liked = true;
         }
 
         const countResult = await client.query(
-            `SELECT item_post_likes_count FROM items WHERE item_id = $1`,
+            `SELECT item_likes_count FROM items WHERE item_id = $1`,
             [item_id]
         );
 
@@ -52,7 +52,7 @@ export const toggleLike = async (user_id: number, item_id: number): Promise<{ li
 
         return {
             liked,
-            likeCount: countResult.rows[0]?.item_post_likes_count || 0
+            likeCount: countResult.rows[0]?.item_likes_count || 0
         };
     } catch (error) {
         await client.query('ROLLBACK');
@@ -72,10 +72,10 @@ export const checkUserLike = async (user_id: number, item_id: number): Promise<b
 
 export const getItemLikeCount = async (item_id: number): Promise<number> => {
     const result = await pool.query(
-        `SELECT item_post_likes_count FROM items WHERE item_id = $1`,
+        `SELECT item_likes_count FROM items WHERE item_id = $1`,
         [item_id]
     );
-    return result.rows[0]?.item_post_likes_count || 0;
+    return result.rows[0]?.item_likes_count || 0;
 };
 
 export const getUserLikedItems = async (user_id: number) => {

@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface CardAddLocationProps {
     image: string;
@@ -44,7 +45,7 @@ export function CardAddLocation({image,title,price,location,uploadTime,onClick,c
             className={`cursor-pointer hover:shadow-lg transition-shadow ${className}`}
             onClick={onClick}
         >
-            <img src={image} alt={title} className="w-full h-60 object-cover rounded-t-md p-3"/>
+            <Image src={image} alt={title} width={200} height={240} unoptimized={typeof image === 'string'} className="w-full h-60 object-cover rounded-t-md p-3"/>
             <div className="p-3">
                 <p className="text-base font-medium text-gray-900 truncate">{title}</p>
                 <p className="text-lg font-bold text-gray-900 mt-1">{formattedPrice}</p>

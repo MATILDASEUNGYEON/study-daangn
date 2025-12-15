@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { postItem } from "@/lib/services/postItem.service";
+import { postItem } from "@/lib/services/addItem.service";
 import { uploadImages } from "@/lib/minioClient";
 import { RegisterItemDTO } from "@/types/item.types";
 import { getIdByUser } from "@/lib/services/auth.service";
@@ -47,11 +47,11 @@ export async function POST(req: NextRequest) {
     }
 
     const itemData: RegisterItemDTO = {
-      item_post_title: title,
-      item_post_description: description,
-      item_post_price: price,
-      item_post_location: address_full,
-      item_post_images: imageUrls,
+      item_title: title,
+      item_description: description,
+      item_price: price,
+      item_location: address_full,
+      item_images: imageUrls,
       category_id,
     };
 

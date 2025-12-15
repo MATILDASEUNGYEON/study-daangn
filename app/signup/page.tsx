@@ -6,6 +6,9 @@ import { User, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import logo from "@/assets/icons/logo.png";
+import subfooter from "@/assets/images/subfooter.png";
 
 export default function Signup() {
   const router = useRouter();
@@ -108,7 +111,7 @@ export default function Signup() {
     <div>
         <div className="flex flex-col items-center pt-20 pb-30 px-4">
             <div className="flex flex-col items-center mb-10">
-                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/logo.png`} alt="logo" width={200} height={60} className="object-contain"/>
+                <Image src={logo} alt="logo" width={200} height={60} className="object-contain"/>
             </div>
             
             <div className="w-full max-w-3xl rounded-xl border border-gray-300 p-10 shadow-sm">
@@ -265,7 +268,7 @@ export default function Signup() {
 
         </div>
         <div className="w-full mt-10">
-            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/subfooter.png`} alt="subfooter" className="w-full" />
+            <Image src={subfooter} alt="subfooter" className="w-full" />
         </div>
     </div>
   );

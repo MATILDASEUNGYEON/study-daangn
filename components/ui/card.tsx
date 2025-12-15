@@ -1,5 +1,6 @@
 import React from "react";
 import { ITEM_STATUS, ITEM_STATUS_LABEL, ItemStatusType } from "@/types/item.types";
+import Image from "next/image";
 
 interface CardProps {
   image: string;
@@ -35,7 +36,7 @@ export function Card({ image, title, price, status, location, onClick, className
       onClick={onClick}
     >
       <div className="relative">
-        <img src={image} alt={title} className="w-full h-50 object-cover rounded-t-md p-2"/>
+        <Image src={image} alt={title} width={200} height={200} unoptimized={typeof image === 'string'} className="w-full h-50 object-cover rounded-t-md p-2"/>
         {status && (
           <span className={`absolute top-2 left-2 px-2 py-1 text-xs text-white rounded ${getStatusStyle(status)}`}>
             {ITEM_STATUS_LABEL[status]}

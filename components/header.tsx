@@ -7,6 +7,9 @@ import {logout} from '../lib/authSlice';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import logo from "@/assets/icons/logo.png";
+import profileIcon from "@/assets/icons/profileIcon.png";
 
 export function HeaderImpl(){
     const isLoggedIn = useSelector((state: RootState) => state.auth.isLogin);
@@ -29,7 +32,7 @@ export function HeaderImpl(){
     return(
         <header className="w-full h-20 bg-white flex items-center">
             <Link href="/" className="flex cursor-pointer ">
-                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/logo.png`} alt="logo" width={180} height={60} className="object-contain" />
+                <Image src={logo} alt="logo" width={180} height={60} className="object-contain" />
             </Link>
 
             <div className="flex-1"></div>
@@ -39,7 +42,7 @@ export function HeaderImpl(){
                     <>
                         <Link href="/mypage">
                             <Button variant="ghost" size="lg" className="bg-amber-500 text-white hover:bg-amber-600">
-                                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/profileIcon.png`} alt="profileIcon" width={20} height={20} className="object-contain mr-2"/>
+                                <Image src={profileIcon} alt="profileIcon" width={20} height={20} className="object-contain mr-2"/>
                                 {user?.id}
                             </Button>
                         </Link>

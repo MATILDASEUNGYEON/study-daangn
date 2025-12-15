@@ -1,3 +1,5 @@
+import { StringToBoolean } from "class-variance-authority/types";
+
 export const ITEM_STATUS = {
     SELLING: 1,    
     RESERVED: 2, 
@@ -13,33 +15,42 @@ export const ITEM_STATUS_LABEL: Record<ItemStatusType, string> = {
 };
 
 export interface RegisterItemDTO {
-    item_post_title: string;
-    item_post_description: string;
-    item_post_price: number;
-    item_post_location: string;
-    item_post_images: string[];
+    item_title: string;
+    item_description: string;
+    item_price: number;
+    item_location: string;
+    item_images: string[];
     category_id: number;
 }
 export interface ItemInfo{
     item_id: number;
     seller_id: string;
     seller_username?: string;
-    item_post_price: number;
-    item_post_title: string;
-    item_post_description: string;
-    item_post_location: string;
-    item_post_images: string[];
+    item_price: number;
+    item_title: string;
+    item_description: string;
+    item_location: string;
+    item_images: string[];
     category_id: number;   
-    item_post_date: string;
+    item_date: string;
     item_status_id: number;
-    item_post_views_count?: number;
-    item_post_likes_count?: number;
+    item_views_count?: number;
+    item_likes_count?: number;
 }
 export interface UpdateDTO {
-    item_post_title?: string;
-    item_post_description?: string;
-    item_post_price?: number
-    item_post_location?: string;
-    item_post_images?: string[];
+    item_title?: string;
+    item_description?: string;
+    item_price?: number
+    item_location?: string;
+    item_images?: string[];
     category_id?: number;    
+}
+
+export interface Category{
+    id:number;
+    text:string;
+}
+export interface Address {
+    region: string;
+    dong: string;
 }

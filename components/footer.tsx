@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
-
+import Image from "next/image";
+import logoIcon from "@/assets/icons/logoIcon.png";
+import contactUs from "@/assets/icons/contactUs.png";
 export function FooterImpl(){
 
     return(
@@ -10,8 +12,8 @@ export function FooterImpl(){
             <div className="flex">
             
                 <div className="w-1/9 flow-root">
-                    <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/icon.png`} alt="icon" width={40} height={40} className="object-contain m-4"/>
-                    <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/contactUs.png`} alt="contactUs" width={72} height={24} className="object-contain m-4"/>
+                    <Image src={logoIcon} alt="icon" width={40} height={40} className="object-contain m-4"/>
+                    <Image src={contactUs} alt="contactUs" width={72} height={24} className="object-contain m-4"/>
                 </div>
                 <div className="w-2/9 flow-root">
                     <div className="flow-root">
