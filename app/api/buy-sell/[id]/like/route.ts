@@ -35,7 +35,7 @@ export async function POST(
             );
         }
 
-        const result = await toggleLike(userInfo.user_id, item_id);
+        const result = await toggleLike(userInfo, item_id);
 
         return NextResponse.json({
             success: true,
@@ -80,7 +80,7 @@ export async function GET(
         if (username) {
             const userInfo = await getIdByUser(username);
             if (userInfo) {
-                isLiked = await checkUserLike(userInfo.user_id, item_id);
+                isLiked = await checkUserLike(userInfo, item_id);
             }
         }
 

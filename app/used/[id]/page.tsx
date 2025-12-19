@@ -14,14 +14,15 @@ import Image from "next/image";
 import sampleImage from "@/assets/images/sampleImage.png";
 import profileIcon from "@/assets/icons/profileIcon.png";
 import subfooter from "@/assets/images/subfooter.png";
-
+import { Input } from "@/components/ui/input";
+import { ChattingModal } from '@/components/ui/chattingModal';
+import SearchIcon from "@/assets/icons/searchIcon.png";
+import { useChat } from '@/hooks/useChat';
 interface Props {
   params: Promise<{
     id: string;
   }>;
 }
-
-
 
 export default function UsedDetailPage({ params }: Props) {
   const { id } = use(params);
@@ -37,7 +38,12 @@ export default function UsedDetailPage({ params }: Props) {
   const [likeCount, setLikeCount] = useState(0);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isReserving, setIsReserving] = useState(false);
+  const { messages, sendMessage, lastRoomId } = useChat(user?.user_id ?? null);
+  const [message, setMessage] = useState<string>("");
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [activeRoomId, setActiveRoomId] = useState<number | null>(null);
 
+  const isSold = item?.item_status_id === ITEM_STATUS.SOLD;
   const temp = 36.5; 
 
   const getEmoji = (t: number) => {
@@ -45,15 +51,51 @@ export default function UsedDetailPage({ params }: Props) {
     if (t < 37.5) return "😀";
     return "🥵";
   };
-
   useEffect(() => {
+    if (!lastRoomId || !item) return;
+
+    if (item.item_status_id !== ITEM_STATUS.SELLING) return;
+
+    const updateToReserved = async () => {
+      try {
+        const res = await fetch(`/api/buy-sell/${id}/status`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: ITEM_STATUS.RESERVED }),
+        });
+
+        if (res.ok) {
+          setItem(prev =>
+            prev ? { ...prev, item_status_id: ITEM_STATUS.RESERVED } : prev
+          );
+        }
+      } catch (e) {
+        console.error("예약 상태 변경 실패:", e);
+      }
+    };
+
+    updateToReserved();
+  }, [lastRoomId]);
+  useEffect(() => {
+    if (lastRoomId && !isChatOpen) {
+      setActiveRoomId(lastRoomId);
+      setIsChatOpen(true);
+    }
+  }, [lastRoomId]);
+  useEffect(() => {
+    if (!id) return;
+
     const fetchLikeStatus = async () => {
       try {
-        const url = user?.id 
-          ? `/api/buy-sell/${id}/like?username=${user.id}`
+        const url = user?.username
+          ? `/api/buy-sell/${id}/like?username=${user.username}`
           : `/api/buy-sell/${id}/like`;
-        const response = await fetch(url);
-        const data = await response.json();
+
+        const res = await fetch(url);
+        if (!res.ok) return;
+
+        const data = await res.json();
+
         if (data.success) {
           setIsLiked(data.data.liked);
           setLikeCount(data.data.likeCount);
@@ -62,14 +104,14 @@ export default function UsedDetailPage({ params }: Props) {
         console.error('좋아요 상태 조회 실패:', error);
       }
     };
-    
-    if (id) {
-      fetchLikeStatus();
-    }
-  }, [id, user?.id]);
+
+    fetchLikeStatus();
+  }, [id, user?.username]);
+
+
 
   const handleLikeToggle = async () => {
-    if (!user?.id) {
+    if (!user?.username) {
       alert('로그인이 필요합니다.');
       router.push('/login');
       return;
@@ -88,7 +130,7 @@ export default function UsedDetailPage({ params }: Props) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username: user.id }),
+        body: JSON.stringify({ username: user.username }),
       });
 
       const data = await response.json();
@@ -110,7 +152,31 @@ export default function UsedDetailPage({ params }: Props) {
       setIsLikeLoading(false);
     }
   };
-
+  const handleSendMessage = (msg: string) => {
+    if (!msg.trim()) return;
+    if (!user?.user_id) {
+      alert('로그인이 필요합니다.');
+      router.push('/login');
+      return;
+    }
+    const chatPayload = {
+      message_id: Date.now(), // or use a proper unique id generator if available
+      room_id: activeRoomId ?? lastRoomId ?? 0, // ensure room_id is set correctly
+      type: "CHAT" as const,
+      item_id: Number(id),
+      sender_id: user.user_id,
+      content: msg,
+      created_at: new Date().toISOString(),
+    };
+    console.log('전송 메시지:', chatPayload);
+    sendMessage(chatPayload);
+  };
+  useEffect(() => {
+  if (lastRoomId && !isChatOpen) {
+    setActiveRoomId(lastRoomId);
+    setIsChatOpen(true);
+  }
+}, [lastRoomId]);
   useEffect(() => {
     const fetchItem = async () => {
       try {
@@ -276,13 +342,13 @@ export default function UsedDetailPage({ params }: Props) {
                             <p className="text-xs text-gray-400 ">{item.item_views_count || 0}</p>
                         </div> */}
                     </div>
-                    <div className="flex gap-4">
-                        <Button 
+                    {/* <div className="flex items-center gap-3 mt-6"> */}
+                        {/* <Button 
                             size="lg" 
                             variant="ghost" 
                             className="mt-6 w-7/8 bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50"
                             onClick={async () => {
-                                if (!user?.id) {
+                                if (!user?.user_id) {
                                     alert('로그인이 필요합니다.');
                                     router.push('/login');
                                     return;
@@ -323,16 +389,107 @@ export default function UsedDetailPage({ params }: Props) {
                             disabled={isReserving || item?.item_status_id !== ITEM_STATUS.SELLING}
                         > 
                             {isReserving ? '처리중...' : item?.item_status_id === ITEM_STATUS.SELLING ? '구매하고싶어요!' : ITEM_STATUS_LABEL[item?.item_status_id as ItemStatusType]} 
-                        </Button>
-                        <Button 
-                            size="lg" 
-                            variant="ghost" 
-                            className={`mt-6 w-1/8 ${isLiked ? 'bg-red-500 hover:bg-red-600' : 'bg-amber-500 hover:bg-amber-600'} text-white transition-colors`}
+                        </Button> */}
+                      <div className="flex items-center gap-3 mt-6">
+                          {/* <form
+                            className="flex items-center gap-2 flex-1"
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              if (!message.trim()) return;
+                              handleSendMessage(message);
+                              setMessage('');
+                            }}
+                          >
+                            <Input
+                              type="text"
+                              name="message"
+                              placeholder="판매자에게 메시지를 보내보세요!"
+                              className="h-11 px-4 text-base flex-1"
+                              value={message}
+                              onChange={(e) => setMessage(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                  e.preventDefault();
+                                  if (!message.trim()) return;
+                                  handleSendMessage(message);
+                                  setMessage('');
+                                }
+                              }}
+                            />
+                            <Button
+                              type="submit"
+                              size="icon"
+                              variant="ghost"
+                              className="h-11 w-11 disabled:opacity-40"
+                              disabled={!message.trim()}
+                              aria-label="메시지 전송"
+                            >
+                              <Image src={SearchIcon} alt="send" width={35} height={35} />
+                            </Button>
+                          </form>
+                            {isChatOpen && activeRoomId && (
+                          <ChattingModal
+                            isOpen={isChatOpen}
+                            onClose={() => setIsChatOpen(false)}
+                            roomId={activeRoomId}
+                            title={item?.item_title}
+                          />
+                        )}                                 */}
+                          {!isSold ? (
+          <form
+            className="flex items-center gap-2 flex-1"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendMessage(message);
+            }}
+          >
+            <Input
+              placeholder="판매자에게 메시지를 보내보세요!"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              disabled={isSold}
+            />
+            <Button
+              type="submit"
+              size="icon"
+              variant="ghost"
+              disabled={!message.trim() || isSold}
+            >
+              <Image src={SearchIcon} alt="send" width={35} height={35} />
+            </Button>
+          </form>
+        ) : (
+          /* ⭐ SOLD 상태 */
+          <Button
+            size="lg"
+            className="bg-gray-400 text-white cursor-default"
+            disabled
+          >
+            구매완료
+          </Button>
+        )}
+
+        {isChatOpen && activeRoomId && (
+          <ChattingModal
+            isOpen={isChatOpen}
+            onClose={() => setIsChatOpen(false)}
+            roomId={activeRoomId}
+            title={item.item_title}
+          />
+        )}
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className={`h-11 w-11 ${
+                              isLiked
+                                ? 'bg-red-500 hover:bg-red-600'
+                                : 'bg-amber-500 hover:bg-amber-600'
+                            } text-white`}
                             onClick={handleLikeToggle}
                             disabled={isLikeLoading}
-                        > 
-                            {isLiked ? '❤️' : '🤍'} 
-                        </Button>
+                          >
+                            {isLiked ? '❤️' : '🤍'}
+                          </Button>
                     </div>
                     
                 </div>

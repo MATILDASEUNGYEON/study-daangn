@@ -57,7 +57,8 @@ export default function AddUsedPage(){
         try {
             const formData = new FormData();
             
-            formData.append('seller_id', user?.id || '');
+            // formData.append('seller_id', user?.user_id || '');
+            formData.append('seller_username', user?.username || '');
             formData.append('title', title);
             formData.append('description', description);
             formData.append('price', isShare ? '0' : price);

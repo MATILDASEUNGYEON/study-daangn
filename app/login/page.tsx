@@ -38,7 +38,7 @@ export default function Login() {
       });
 
       const data = await res.json();
-
+      console.log(data);
       if (!res.ok) {
         throw new Error(data.message || '로그인에 실패했습니다.');
       }

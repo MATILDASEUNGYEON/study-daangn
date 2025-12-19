@@ -1,7 +1,9 @@
 export interface CreateUserDTO{
-    id: string;
+    user_id: number;
+    username: string;
     password: string;
     email: string;
+    temperature: number;
     address_main ?: string;
     address_dong ?: string;
 }
@@ -16,7 +18,7 @@ export interface AuthResponse {
 }
 export interface JWTPayload {
 	id: string;
-	type?: "access" | "password_reset"; // 토큰 타입
+	type?: "access" | "password_reset";
 }
 
 export interface AuthRequest extends Request {

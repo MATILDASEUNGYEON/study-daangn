@@ -1,5 +1,3 @@
-import { StringToBoolean } from "class-variance-authority/types";
-
 export const ITEM_STATUS = {
     SELLING: 1,    
     RESERVED: 2, 

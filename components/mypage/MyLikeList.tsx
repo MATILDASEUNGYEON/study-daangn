@@ -17,13 +17,13 @@ export default function MyLikeList() {
 
     useEffect(() => {
         const fetchLikedItems = async () => {
-            if (!user?.id) {
+            if (!user?.username) {
                 setLoading(false);
                 return;
             }
 
             try {
-                const response = await fetch(`/api/buy-sell/likelist?username=${user.id}`);
+                const response = await fetch(`/api/buy-sell/likelist?username=${user.username}`);
                 const result = await response.json();
                 
                 if (response.ok) {
@@ -39,29 +39,39 @@ export default function MyLikeList() {
         };
 
         fetchLikedItems();
-    }, [user?.id]);
+    }, [user?.username]);
 
     const handleUnlike = async (itemId: number) => {
-        if (!user?.id) return;
+        if (!user?.username) {
+            alert('로그인이 필요합니다.');
+            router.push('/login');
+            return;
+        }
 
         try {
             const response = await fetch(`/api/buy-sell/${itemId}/like`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ user_id: user.id }),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: user.username, 
+            }),
             });
 
             if (response.ok) {
-                setItems(prev => prev.filter(item => item.item_id !== itemId));
+            setItems(prev => prev.filter(item => item.item_id !== itemId));
             } else {
-                alert('좋아요 취소에 실패했습니다.');
+            const err = await response.json();
+            console.error(err);
+            alert('좋아요 취소에 실패했습니다.');
             }
-        } catch {
+        } catch (error) {
+            console.error(error);
             alert('좋아요 취소 중 오류가 발생했습니다.');
         }
     };
+
 
     const getStatusBadgeColor = (statusId: number) => {
         switch (statusId) {
@@ -88,7 +98,7 @@ export default function MyLikeList() {
         );
     }
 
-    if (!user?.id) {
+    if (!user?.user_id) {
         return (
             <div className="text-center text-gray-500 py-10">
                 로그인이 필요합니다.

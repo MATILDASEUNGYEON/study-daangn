@@ -17,13 +17,13 @@ export default function MyUsedList() {
 
     useEffect(() => {
         const fetchMyItems = async () => {
-            if (!user?.id) {
+            if (!user?.username) {
                 setLoading(false);
                 return;
             }
 
             try {
-                const response = await fetch(`/api/buy-sell/myitems?username=${user.id}`);
+                const response = await fetch(`/api/buy-sell/myitems?username=${user.username}`);
                 const result = await response.json();
                 
                 if (response.ok) {
@@ -39,7 +39,7 @@ export default function MyUsedList() {
         };
 
         fetchMyItems();
-    }, [user?.id]);
+    }, [user?.username]);
 
     const handleStatusChange = async (itemId: number, newStatus: number) => {
         try {
@@ -100,7 +100,7 @@ export default function MyUsedList() {
         );
     }
 
-    if (!user?.id) {
+    if (!user?.user_id) {
         return (
             <div className="text-center text-gray-500 py-10">
                 로그인이 필요합니다.

@@ -43,7 +43,7 @@ export function HeaderImpl(){
                         <Link href="/mypage">
                             <Button variant="ghost" size="lg" className="bg-amber-500 text-white hover:bg-amber-600">
                                 <Image src={profileIcon} alt="profileIcon" width={20} height={20} className="object-contain mr-2"/>
-                                {user?.id}
+                                {user?.username}
                             </Button>
                         </Link>
                         <Button variant="ghost" size="lg" className="bg-amber-500 text-white hover:bg-amber-600" onClick={handleLogout}>

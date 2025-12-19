@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store'
 import MyUsedList from '@/components/mypage/MyUsedList';
 import MyLikeList from '@/components/mypage/MyLikeList';
+import MyChattingList from '@/components/mypage/MyChattingList';
 import Image from 'next/image';
 import prifileIcon from "@/assets/icons/profileIcon.png";
 import locationIcon from "@/assets/icons/pingIcon.png"
@@ -14,7 +15,6 @@ import likeIcon from "@/assets/icons/likeIcon.png"
 import writeIcon from "@/assets/icons/writeIcon.png"
 import chatIcon from "@/assets/icons/chatIcon.png"
 import subfooter from "@/assets/images/subfooter.png";
-
 type TabType = 'used' | 'like' | 'post' | 'chat' | null;
 
 export default function MyPage(){
@@ -26,18 +26,17 @@ export default function MyPage(){
 
     useEffect(() => {
         const fetchCounts = async () => {
-            if (!user?.id) return;
+            if (!user?.username) return;
 
             try {
-                console.log('Fetching counts for user:', user.id);
-                const usedResponse = await fetch(`/api/buy-sell/myitems?username=${user.id}`);
+                console.log('Fetching counts for user:', user.username);
+                const usedResponse = await fetch(`/api/buy-sell/myitems?username=${user.username}`);
                 const usedResult = await usedResponse.json();
                 if (usedResponse.ok) {
                     setUsedCount(usedResult.data?.length || 0);
                 }
 
-               
-                const likeResponse = await fetch(`/api/buy-sell/likelist?username=${user.id}`);
+                const likeResponse = await fetch(`/api/buy-sell/likelist?username=${user.username}`);
                 const likeResult = await likeResponse.json();
                 if (likeResponse.ok) {
                     setLikeCount(likeResult.data?.length || 0);
@@ -48,7 +47,8 @@ export default function MyPage(){
         };
 
         fetchCounts();
-    }, [user?.id]);
+    }, [user?.username]);
+
 
     const handleTabClick = (tab: TabType) => {
         setSelectedTab(selectedTab === tab ? null : tab);
@@ -60,7 +60,7 @@ export default function MyPage(){
             <div className='flow-root border border-gray-200 rounded-xl p-10 m-10 w-90 h-auto '>
                 <div className='flex flow-root justify-items-center pb-5'>
                     <Image src={prifileIcon} alt="profileIcon" width={60} height={60} className="object-contain m-4"/>
-                    <p className='text-lg font-bold'>{user?.id}</p>
+                    <p className='text-lg font-bold'>{user?.username}</p>
                 </div>
                 <div className="flex pb-3">
                     <Image src={locationIcon} alt="locationIcon" className='size-5'/>
@@ -129,11 +129,8 @@ export default function MyPage(){
                         작성 내역 기능은 준비 중입니다.
                     </div>
                 )}
-                {selectedTab === 'chat' && (
-                    <div className="text-center text-gray-500 py-10">
-                        채팅 내역 기능은 준비 중입니다.
-                    </div>
-                )}
+                {selectedTab === 'chat' && <MyChattingList />}
+
             </div>
         )}
         
