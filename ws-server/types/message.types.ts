@@ -1,6 +1,6 @@
 export interface JoinMessage {
-    type: "join";
-    user_id : number;
+    type: 'join';
+    user_id: number;
 }
 
 // export interface ChatMessage {
@@ -13,16 +13,16 @@ export interface JoinMessage {
 // }
 
 export interface ChatSendPayload {
-  type: "CHAT";
-  room_id: number;
-  sender_id: number;
-  content: string;
+    type: 'CHAT';
+    room_id: number;
+    sender_id: number;
+    content: string;
 }
 export interface ChatMessage {
-  type: "CHAT";
-  message_id: number;
-  room_id: number;
-  sender_id: number;
-  content: string;
-  created_at: string;
+    type: 'CHAT';
+    message_id: number;
+    room_id: number;
+    sender_id: number;
+    content: string;
+    created_at: string;
 }

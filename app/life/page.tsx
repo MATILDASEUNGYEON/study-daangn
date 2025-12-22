@@ -1,21 +1,22 @@
-import * as React from "react";
+import * as React from 'react';
 import { ChevronDownIcon } from '@heroicons/react/16/solid';
-import { Button } from "@/components/ui/button";
-import {Select} from "@/components/ui/select";
+import { Button } from '@/components/ui/button';
+import { Select } from '@/components/ui/select';
 
-export default function LifePage(){
-    return(
+export default function LifePage() {
+    return (
         <div>
             <div className="flex w-full items-center gap-8 pb-10 justify-center">
-
                 <div className="relative flex items-start self-start bg-black text-white rounded-full px-4 py-2 cursor-pointer h-12">
-                    <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/locationIcon.png`} alt="Location Icon" className="size-5 mr-2 pointer-events-none items-center self-center"/>
-                    <select
-                        className="appearance-none bg-transparent pr-6 pl-1 self-center text-white text-sm focus:outline-none relative z-10"
-                    >
-                        <option className='text-black'>가산동</option>
-                        <option className='text-black'>독산동</option>
-                        <option className='text-black'>신림동</option>
+                    <img
+                        src={`${process.env.NEXT_PUBLIC_MINIO_URL}/locationIcon.png`}
+                        alt="Location Icon"
+                        className="size-5 mr-2 pointer-events-none items-center self-center"
+                    />
+                    <select className="appearance-none bg-transparent pr-6 pl-1 self-center text-white text-sm focus:outline-none relative z-10">
+                        <option className="text-black">가산동</option>
+                        <option className="text-black">독산동</option>
+                        <option className="text-black">신림동</option>
                     </select>
 
                     <ChevronDownIcon
@@ -25,23 +26,29 @@ export default function LifePage(){
                 </div>
                 <div className="flow-root">
                     <div className="flex items-center bg-white border border-gray-300 rounded-full px-3 py-2 w-[900px] h-12">
-
                         <div className="relative min-w-[90px] pointer-events-auto">
-                            <Select options={['중고거래','알바','동네생활']}/>
+                            <Select
+                                options={['중고거래', '알바', '동네생활']}
+                            />
                         </div>
                         <div className="h-5 w-px bg-gray-300 mx-3"></div>
 
                         <input
-                        type="text"
-                        placeholder="Search"
-                        className="flex-grow bg-transparent focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
+                            type="text"
+                            placeholder="Search"
+                            className="flex-grow bg-transparent focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
                         />
                         <button className="btn btn-circle text-white">
-                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/searchIcon.png`} alt="Search Icon" width={30} height={30}/>
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_MINIO_URL}/searchIcon.png`}
+                                alt="Search Icon"
+                                width={30}
+                                height={30}
+                            />
                         </button>
                     </div>
 
-                    <div className='flex text-sm text-gray-500 mt-1 gap-2'>
+                    <div className="flex text-sm text-gray-500 mt-1 gap-2">
                         <p>인기 검색어</p>
                         <div className="h-5 w-px bg-gray-300 mx-3"></div>
                         <p>소일거리</p>
@@ -56,12 +63,21 @@ export default function LifePage(){
                 </div>
             </div>
             <div className="py-8">
-                <p className="text-sm text-gray-400">홈 {'>'}  동네생활</p>
+                <p className="text-sm text-gray-400">홈 {'>'} 동네생활</p>
                 <div className="flex">
-                    <p className="text-2xl font-bold">OOO시 OOO구 OOO동 동네생활</p>
-                    <Button type="button" className="bg-amber-500 hover:bg-amber-600 ml-auto">
-                        <div className= "flex">
-                            <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/plusIcon.png`} alt="plusIcon" className='size-5 mr-2'/>
+                    <p className="text-2xl font-bold">
+                        OOO시 OOO구 OOO동 동네생활
+                    </p>
+                    <Button
+                        type="button"
+                        className="bg-amber-500 hover:bg-amber-600 ml-auto"
+                    >
+                        <div className="flex">
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_MINIO_URL}/plusIcon.png`}
+                                alt="plusIcon"
+                                className="size-5 mr-2"
+                            />
                             <p className="text-white">글쓰기</p>
                         </div>
                     </Button>
@@ -82,7 +98,6 @@ export default function LifePage(){
                     <p>동네친구</p>
                     <p>이사/시공</p>
                     <p>주거/부동산</p>
-
                 </div>
                 <div className="flex-flow w-6/7">
                     <div className="py-5">
@@ -92,7 +107,9 @@ export default function LifePage(){
                         <div className="flex w-full border border-gray-300 rounded-md p-4 mb-5 ml-auto">
                             <div className="w-4/5 flex flex-col items-start justify-center">
                                 <p className="text-lg font-bold">Title</p>
-                                <p className="text-2xl text-gray-400">Context Preview</p>
+                                <p className="text-2xl text-gray-400">
+                                    Context Preview
+                                </p>
                                 <div className="flex text-sm text-gray-300 gap-2">
                                     <p>Category</p>
                                     <p>Category</p>
@@ -100,23 +117,41 @@ export default function LifePage(){
                                 </div>
                                 <div className="flex pt-3">
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/likeIcon.png`} alt="likeIcon" className='size-4'/>
-                                        <p className="text-s text-gray-400">0</p>   
+                                        <img
+                                            src={`${process.env.NEXT_PUBLIC_MINIO_URL}/likeIcon.png`}
+                                            alt="likeIcon"
+                                            className="size-4"
+                                        />
+                                        <p className="text-s text-gray-400">
+                                            0
+                                        </p>
                                     </div>
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/commentIcon.png`} alt="commentIcon" className='size-4'/>
-                                        <p className="text-s text-gray-400">0</p>
+                                        <img
+                                            src={`${process.env.NEXT_PUBLIC_MINIO_URL}/commentIcon.png`}
+                                            alt="commentIcon"
+                                            className="size-4"
+                                        />
+                                        <p className="text-s text-gray-400">
+                                            0
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                             <div className="w-1/5 flex justify-center">
-                                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} alt="sampleImage" className="size-40 object-cover m-3"/>
+                                <img
+                                    src={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
+                                    alt="sampleImage"
+                                    className="size-40 object-cover m-3"
+                                />
                             </div>
                         </div>
                         <div className="flex w-full border border-gray-300 rounded-md p-4 mb-5 ml-auto">
                             <div className="w-4/5 flex flex-col items-start justify-center">
                                 <p className="text-lg font-bold">Title</p>
-                                <p className="text-2xl text-gray-400">Context Preview</p>
+                                <p className="text-2xl text-gray-400">
+                                    Context Preview
+                                </p>
                                 <div className="flex text-sm text-gray-300 gap-2">
                                     <p>Category</p>
                                     <p>Category</p>
@@ -124,23 +159,41 @@ export default function LifePage(){
                                 </div>
                                 <div className="flex pt-3">
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/likeIcon.png`} alt="likeIcon" className='size-4'/>
-                                        <p className="text-s text-gray-400">0</p>   
+                                        <img
+                                            src={`${process.env.NEXT_PUBLIC_MINIO_URL}/likeIcon.png`}
+                                            alt="likeIcon"
+                                            className="size-4"
+                                        />
+                                        <p className="text-s text-gray-400">
+                                            0
+                                        </p>
                                     </div>
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/commentIcon.png`} alt="commentIcon" className='size-4'/>
-                                        <p className="text-s text-gray-400">0</p>
+                                        <img
+                                            src={`${process.env.NEXT_PUBLIC_MINIO_URL}/commentIcon.png`}
+                                            alt="commentIcon"
+                                            className="size-4"
+                                        />
+                                        <p className="text-s text-gray-400">
+                                            0
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                             <div className="w-1/5 flex justify-center">
-                                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} alt="sampleImage" className="size-40 object-cover m-3"/>
+                                <img
+                                    src={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
+                                    alt="sampleImage"
+                                    className="size-40 object-cover m-3"
+                                />
                             </div>
                         </div>
                         <div className="flex w-full border border-gray-300 rounded-md p-4 mb-5 ml-auto">
                             <div className="w-4/5 flex flex-col items-start justify-center">
                                 <p className="text-lg font-bold">Title</p>
-                                <p className="text-2xl text-gray-400">Context Preview</p>
+                                <p className="text-2xl text-gray-400">
+                                    Context Preview
+                                </p>
                                 <div className="flex text-sm text-gray-300 gap-2">
                                     <p>Category</p>
                                     <p>Category</p>
@@ -148,25 +201,45 @@ export default function LifePage(){
                                 </div>
                                 <div className="flex pt-3">
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/likeIcon.png`} alt="likeIcon" className='size-4'/>
-                                        <p className="text-s text-gray-400">0</p>   
+                                        <img
+                                            src={`${process.env.NEXT_PUBLIC_MINIO_URL}/likeIcon.png`}
+                                            alt="likeIcon"
+                                            className="size-4"
+                                        />
+                                        <p className="text-s text-gray-400">
+                                            0
+                                        </p>
                                     </div>
                                     <div className="flex gap-2 items-center mr-4">
-                                        <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/commentIcon.png`} alt="commentIcon" className='size-4'/>
-                                        <p className="text-s text-gray-400">0</p>
+                                        <img
+                                            src={`${process.env.NEXT_PUBLIC_MINIO_URL}/commentIcon.png`}
+                                            alt="commentIcon"
+                                            className="size-4"
+                                        />
+                                        <p className="text-s text-gray-400">
+                                            0
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                             <div className="w-1/5 flex justify-center">
-                                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`} alt="sampleImage" className="size-40 object-cover m-3"/>
+                                <img
+                                    src={`${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`}
+                                    alt="sampleImage"
+                                    className="size-40 object-cover m-3"
+                                />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="w-full mt-10">
-                <img src={`${process.env.NEXT_PUBLIC_MINIO_URL}/subfooter.png`} alt="subfooter" className="w-full" />
+                <img
+                    src={`${process.env.NEXT_PUBLIC_MINIO_URL}/subfooter.png`}
+                    alt="subfooter"
+                    className="w-full"
+                />
             </div>
         </div>
-    )
+    );
 }

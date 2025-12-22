@@ -1,4 +1,4 @@
-import {createSlice,PayloadAction} from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface UserAddress {
     dong: string;
@@ -20,51 +20,51 @@ interface UsedFilterState {
     keyword: string;
 }
 const initialState: UsedFilterState = {
-    location: "",
+    location: '',
     userAddress: null,
-    category: "중고거래",
+    category: '중고거래',
     isTrade: false,
-    itemCategory: "",
+    itemCategory: '',
     priceButton: null,
-    minPrice: "",
-    maxPrice: "",
-    keyword: "",
-}
+    minPrice: '',
+    maxPrice: '',
+    keyword: '',
+};
 
-const UsedFilterSlice= createSlice({
+const UsedFilterSlice = createSlice({
     name: 'usedFilter',
     initialState,
-    reducers:{
-        setLocation: (state, action:PayloadAction<string>)=>{
+    reducers: {
+        setLocation: (state, action: PayloadAction<string>) => {
             state.location = action.payload;
         },
-        setUserAddress: (state, action:PayloadAction<UserAddress | null>)=>{
+        setUserAddress: (state, action: PayloadAction<UserAddress | null>) => {
             state.userAddress = action.payload;
             if (action.payload) {
                 state.location = action.payload.dong;
             }
         },
-        updateDong: (state, action:PayloadAction<string>)=>{
+        updateDong: (state, action: PayloadAction<string>) => {
             state.location = action.payload;
             if (state.userAddress) {
                 state.userAddress.dong = action.payload;
                 state.userAddress.full = `${state.userAddress.city} ${state.userAddress.borough} ${action.payload}`;
             }
         },
-        setCategory: (state, action:PayloadAction<string>)=>{
+        setCategory: (state, action: PayloadAction<string>) => {
             state.category = action.payload;
         },
-        setIsTrade: (state, action:PayloadAction<boolean>)=>{
+        setIsTrade: (state, action: PayloadAction<boolean>) => {
             state.isTrade = action.payload;
         },
-        setItemCategory: (state, action:PayloadAction<string>)=>{
+        setItemCategory: (state, action: PayloadAction<string>) => {
             state.itemCategory = action.payload;
         },
-        setPriceButton: (state, action:PayloadAction<string | null>)=>{
+        setPriceButton: (state, action: PayloadAction<string | null>) => {
             state.priceButton = action.payload;
-            if( action.payload !==null){
-                state.minPrice = "";
-                state.maxPrice = "";
+            if (action.payload !== null) {
+                state.minPrice = '';
+                state.maxPrice = '';
             }
         },
         setMinPrice: (state, action: PayloadAction<string>) => {
@@ -76,18 +76,18 @@ const UsedFilterSlice= createSlice({
             state.priceButton = null;
         },
         setKeyword: (state, action: PayloadAction<string>) => {
-        state.keyword = action.payload;
+            state.keyword = action.payload;
         },
 
         resetFilter: (state) => {
-            state.itemCategory = "";
+            state.itemCategory = '';
             state.priceButton = null;
-            state.minPrice = "";
-            state.maxPrice = "";
-            state.keyword = "";
+            state.minPrice = '';
+            state.maxPrice = '';
+            state.keyword = '';
         },
-    }
-})
+    },
+});
 
 export const {
     setLocation,
@@ -100,6 +100,6 @@ export const {
     setMinPrice,
     setMaxPrice,
     setKeyword,
-    resetFilter
-} = UsedFilterSlice.actions
-export default UsedFilterSlice.reducer
+    resetFilter,
+} = UsedFilterSlice.actions;
+export default UsedFilterSlice.reducer;

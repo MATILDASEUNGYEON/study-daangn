@@ -9,7 +9,9 @@ export interface Category {
 let categoryCache: Category[] | null = null;
 
 export function useCategories() {
-    const [categories, setCategories] = useState<Category[]>(categoryCache || []);
+    const [categories, setCategories] = useState<Category[]>(
+        categoryCache || [],
+    );
     const [isLoading, setIsLoading] = useState(!categoryCache);
     const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +42,7 @@ export function useCategories() {
 
     // id로 카테고리 텍스트 빠르게 조회하기 위한 Map
     const categoryMap = useMemo(() => {
-        return new Map(categories.map(cat => [cat.id, cat.text]));
+        return new Map(categories.map((cat) => [cat.id, cat.text]));
     }, [categories]);
 
     // id로 카테고리 이름 가져오기
@@ -53,7 +55,7 @@ export function useCategories() {
         categoryMap,
         getCategoryName,
         isLoading,
-        error
+        error,
     };
 }
 

@@ -1,5 +1,5 @@
-import React from "react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 
 interface CardAddLocationProps {
     image: string;
@@ -10,19 +10,19 @@ interface CardAddLocationProps {
     onClick?: () => void;
     className?: string;
 }
-function timeAgo(uploadTime?: string | null){
-    if (!uploadTime) return "";
+function timeAgo(uploadTime?: string | null) {
+    if (!uploadTime) return '';
 
     const normalizedDate = uploadTime.replace(' ', 'T');
     const uploaded = new Date(normalizedDate);
-    
-    if (isNaN(uploaded.getTime())) return "";
-    
+
+    if (isNaN(uploaded.getTime())) return '';
+
     const now = new Date();
     const diffMs = now.getTime() - uploaded.getTime();
 
     const diffMinutes = Math.floor(diffMs / 1000 / 60);
-    if (diffMinutes < 1) return "방금 전";
+    if (diffMinutes < 1) return '방금 전';
     if (diffMinutes < 60) return `${diffMinutes}분 전`;
 
     const diffHours = Math.floor(diffMinutes / 60);
@@ -33,22 +33,41 @@ function timeAgo(uploadTime?: string | null){
 
     const diffWeeks = Math.floor(diffDays / 7);
     if (diffWeeks < 4) return `${diffWeeks}주 전`;
-    
-    
+
     return uploaded.toLocaleDateString('ko-KR');
 }
-export function CardAddLocation({image,title,price,location,uploadTime,onClick,className=""}:CardAddLocationProps) {
-    const formattedPrice = typeof price === 'number' ? `${price.toLocaleString()}원` : price;
+export function CardAddLocation({
+    image,
+    title,
+    price,
+    location,
+    uploadTime,
+    onClick,
+    className = '',
+}: CardAddLocationProps) {
+    const formattedPrice =
+        typeof price === 'number' ? `${price.toLocaleString()}원` : price;
     const formattedUploadTime = timeAgo(uploadTime);
     return (
-        <div 
+        <div
             className={`cursor-pointer hover:shadow-lg transition-shadow ${className}`}
             onClick={onClick}
         >
-            <Image src={image} alt={title} width={200} height={240} unoptimized={typeof image === 'string'} className="w-full h-60 object-cover rounded-t-md p-3"/>
+            <Image
+                src={image}
+                alt={title}
+                width={200}
+                height={240}
+                unoptimized={typeof image === 'string'}
+                className="w-full h-60 object-cover rounded-t-md p-3"
+            />
             <div className="p-3">
-                <p className="text-base font-medium text-gray-900 truncate">{title}</p>
-                <p className="text-lg font-bold text-gray-900 mt-1">{formattedPrice}</p>
+                <p className="text-base font-medium text-gray-900 truncate">
+                    {title}
+                </p>
+                <p className="text-lg font-bold text-gray-900 mt-1">
+                    {formattedPrice}
+                </p>
                 <div className="flex text-sm items-center text-gray-400 mt-3 gap-3">
                     <p>{location}</p>
                     <p>•</p>

@@ -1,11 +1,16 @@
-"use client"
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
-import { ItemInfo, ITEM_STATUS, ITEM_STATUS_LABEL, ItemStatusType } from '@/types/item.types';
-import {toPriceFormat,getTimeAgo} from '@/utils/format';
-import {useRouter} from 'next/navigation';
+import {
+    ItemInfo,
+    ITEM_STATUS,
+    ITEM_STATUS_LABEL,
+    ItemStatusType,
+} from '@/types/item.types';
+import { toPriceFormat, getTimeAgo } from '@/utils/format';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 export default function MyUsedList() {
@@ -23,9 +28,11 @@ export default function MyUsedList() {
             }
 
             try {
-                const response = await fetch(`/api/buy-sell/myitems?username=${user.username}`);
+                const response = await fetch(
+                    `/api/buy-sell/myitems?username=${user.username}`,
+                );
                 const result = await response.json();
-                
+
                 if (response.ok) {
                     setItems(result.data || []);
                 } else {
@@ -52,12 +59,12 @@ export default function MyUsedList() {
             });
 
             if (response.ok) {
-                setItems(prev => 
-                    prev.map(item => 
-                        item.item_id === itemId 
+                setItems((prev) =>
+                    prev.map((item) =>
+                        item.item_id === itemId
                             ? { ...item, item_status_id: newStatus }
-                            : item
-                    )
+                            : item,
+                    ),
                 );
             } else {
                 alert('상태 변경에 실패했습니다.');
@@ -68,13 +75,17 @@ export default function MyUsedList() {
     };
 
     const handleApprove = async (itemId: number) => {
-        if (confirm('판매를 승인하시겠습니까? 상태가 "판매완료"로 변경됩니다.')) {
+        if (
+            confirm('판매를 승인하시겠습니까? 상태가 "판매완료"로 변경됩니다.')
+        ) {
             await handleStatusChange(itemId, ITEM_STATUS.SOLD);
         }
     };
 
     const handleCancel = async (itemId: number) => {
-        if (confirm('예약을 취소하시겠습니까? 상태가 "판매중"으로 변경됩니다.')) {
+        if (
+            confirm('예약을 취소하시겠습니까? 상태가 "판매중"으로 변경됩니다.')
+        ) {
             await handleStatusChange(itemId, ITEM_STATUS.SELLING);
         }
     };
@@ -109,11 +120,7 @@ export default function MyUsedList() {
     }
 
     if (error) {
-        return (
-            <div className="text-center text-red-500 py-10">
-                {error}
-            </div>
-        );
+        return <div className="text-center text-red-500 py-10">{error}</div>;
     }
 
     if (items.length === 0) {
@@ -129,57 +136,78 @@ export default function MyUsedList() {
             <h2 className="text-xl font-bold mb-6">내 중고거래 내역</h2>
             <div className="grid gap-4">
                 {items.map((item) => (
-                    <div 
-                        key={item.item_id} 
+                    <div
+                        key={item.item_id}
                         className="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:shadow-md transition-shadow"
                     >
-                        <div 
+                        <div
                             className="w-24 h-24 flex-shrink-0 cursor-pointer"
                             onClick={() => router.push(`/used/${item.item_id}`)}
                         >
                             {item.item_images && item.item_images.length > 0 ? (
-                                <Image 
-                                    src={item.item_images[0]} 
+                                <Image
+                                    src={item.item_images[0]}
                                     alt={item.item_title}
                                     width={50}
                                     height={50}
-                                    unoptimized={typeof item.item_images?.[0] === 'string'}
+                                    unoptimized={
+                                        typeof item.item_images?.[0] ===
+                                        'string'
+                                    }
                                     className="w-full h-full object-cover rounded-lg"
                                 />
                             ) : (
                                 <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                                    <span className="text-gray-400 text-xs">이미지 없음</span>
+                                    <span className="text-gray-400 text-xs">
+                                        이미지 없음
+                                    </span>
                                 </div>
                             )}
                         </div>
 
                         <div className="flex-grow">
-                            <h3 
+                            <h3
                                 className="font-semibold text-lg cursor-pointer hover:text-orange-500"
-                                onClick={() => router.push(`/used/${item.item_id}`)}
+                                onClick={() =>
+                                    router.push(`/used/${item.item_id}`)
+                                }
                             >
                                 {item.item_title}
                             </h3>
-                            <p className="text-orange-500 font-bold">{toPriceFormat(String(item.item_price))}원</p>
-                            <p className="text-sm text-gray-500">{item.item_location}</p>
-                            <p className="text-xs text-gray-400">{getTimeAgo(item.item_date)}</p>
+                            <p className="text-orange-500 font-bold">
+                                {toPriceFormat(String(item.item_price))}원
+                            </p>
+                            <p className="text-sm text-gray-500">
+                                {item.item_location}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                                {getTimeAgo(item.item_date)}
+                            </p>
                         </div>
 
                         <div className="flex flex-col items-end gap-2">
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeColor(item.item_status_id)}`}>
-                                {ITEM_STATUS_LABEL[item.item_status_id as ItemStatusType] || '알 수 없음'}
+                            <span
+                                className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeColor(item.item_status_id)}`}
+                            >
+                                {ITEM_STATUS_LABEL[
+                                    item.item_status_id as ItemStatusType
+                                ] || '알 수 없음'}
                             </span>
-                            
+
                             {item.item_status_id === ITEM_STATUS.RESERVED ? (
                                 <div className="flex gap-2">
                                     <button
-                                        onClick={() => handleApprove(item.item_id)}
+                                        onClick={() =>
+                                            handleApprove(item.item_id)
+                                        }
                                         className="text-sm px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
                                     >
                                         승인
                                     </button>
                                     <button
-                                        onClick={() => handleCancel(item.item_id)}
+                                        onClick={() =>
+                                            handleCancel(item.item_id)
+                                        }
                                         className="text-sm px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
                                     >
                                         취소

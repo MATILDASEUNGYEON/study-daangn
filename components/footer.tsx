@@ -1,19 +1,29 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import Image from "next/image";
-import logoIcon from "@/assets/icons/logoIcon.png";
-import contactUs from "@/assets/icons/contactUs.png";
-export function FooterImpl(){
-
-    return(
+import * as React from 'react';
+import Image from 'next/image';
+import logoIcon from '@/assets/icons/logoIcon.png';
+import contactUs from '@/assets/icons/contactUs.png';
+export function FooterImpl() {
+    return (
         <footer className="w-full bg-white">
             <div className="w-full h-px bg-gray-100 my-4"></div>
             <div className="flex">
-            
                 <div className="w-1/9 flow-root">
-                    <Image src={logoIcon} alt="icon" width={40} height={40} className="object-contain m-4"/>
-                    <Image src={contactUs} alt="contactUs" width={72} height={24} className="object-contain m-4"/>
+                    <Image
+                        src={logoIcon}
+                        alt="icon"
+                        width={40}
+                        height={40}
+                        className="object-contain m-4"
+                    />
+                    <Image
+                        src={contactUs}
+                        alt="contactUs"
+                        width={72}
+                        height={24}
+                        className="object-contain m-4"
+                    />
                 </div>
                 <div className="w-2/9 flow-root">
                     <div className="flow-root">
@@ -45,12 +55,25 @@ export function FooterImpl(){
                 </div>
                 <div className="w-2/9 flex flex-col">
                     <p className="py-2 text-sm font-bold">Karrot</p>
-                    <a className="text-sm text-black after:content-['_↗']" href="https://www.naver.com/">Canada</a>
-                    <a className="text-sm text-black after:content-['_↗']" href="https://www.naver.com/">United States</a>
-                    <a className="text-sm text-black after:content-['_↗']" href="https://www.naver.com/">United Kingdom</a>
-                    
+                    <a
+                        className="text-sm text-black after:content-['_↗']"
+                        href="https://www.naver.com/"
+                    >
+                        Canada
+                    </a>
+                    <a
+                        className="text-sm text-black after:content-['_↗']"
+                        href="https://www.naver.com/"
+                    >
+                        United States
+                    </a>
+                    <a
+                        className="text-sm text-black after:content-['_↗']"
+                        href="https://www.naver.com/"
+                    >
+                        United Kingdom
+                    </a>
                 </div>
-                
             </div>
             <div className="w-full h-px bg-gray-100 my-4"></div>
             <div className="p-4">
@@ -73,5 +96,5 @@ export function FooterImpl(){
                 </div>
             </div>
         </footer>
-    )
+    );
 }

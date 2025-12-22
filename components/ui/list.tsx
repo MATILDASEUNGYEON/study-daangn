@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export interface ListItem {
     id: string | number;
@@ -11,9 +11,12 @@ interface ListProps {
     className?: string;
 }
 
-export function List({ items, onItemClick, className = "" }: ListProps) {
+export function List({ items, onItemClick, className = '' }: ListProps) {
     return (
-        <ul role="list" className={`divide-y divide-gray-100 py-3 ${className}`}>
+        <ul
+            role="list"
+            className={`divide-y divide-gray-100 py-3 ${className}`}
+        >
             {items.map((item) => (
                 <li
                     key={item.id}
