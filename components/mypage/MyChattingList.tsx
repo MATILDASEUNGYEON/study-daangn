@@ -4,34 +4,85 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { ChattingModal } from '@/components/ui/chattingModal';
 import { ChatRoom } from '@/types/chat.types';
-
+import Image from 'next/image';
+import sampleImage from '@/assets/images/sampleImage.png';
 export default function MyChattingList() {
     const user = useSelector((state: RootState) => state.auth.user);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
     const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
 
+    const loadRoomDetails = async (rooms: ChatRoom[]) => {
+        const updatedRooms = await Promise.all(
+            rooms.map(async (room) => {
+                try {
+                    const [itemRes, lastMsgRes] = await Promise.all([
+                        fetch(`/api/chat/rooms/${room.room_id}/item`),
+                        fetch(`/api/chat/rooms/${room.room_id}/lastmessage`),
+                    ]);
+
+                    const itemJson = itemRes.ok ? await itemRes.json() : null;
+                    const msgJson = lastMsgRes.ok
+                        ? await lastMsgRes.json()
+                        : null;
+
+                    return {
+                        ...room,
+                        itemImage: itemJson?.data?.item_images?.[0] ?? null,
+                        lastMessage: msgJson?.data?.content ?? null,
+                        lastMessageTime: msgJson?.data?.created_at ?? null,
+                    };
+                } catch (err) {
+                    console.error(
+                        `채팅방(${room.room_id}) 추가 정보 로딩 실패`,
+                        err,
+                    );
+                    return room;
+                }
+            }),
+        );
+
+        return updatedRooms;
+    };
+
     useEffect(() => {
-        const fetchChatRooms = async () => {
-            if (!user || !user.username) {
-                setChatRooms([]);
-                return;
-            }
+        if (!user?.username) return;
+
+        let cancelled = false;
+
+        const fetchRooms = async () => {
             try {
                 const res = await fetch(`/api/chat/users/${user.username}`);
                 const result = await res.json();
 
-                if (res.ok) {
-                    console.log('Fetched chat rooms:', result.data);
-                    setChatRooms(result.data);
+                if (!res.ok || cancelled) return;
+
+                const baseRooms: ChatRoom[] = result.data.map(
+                    (room: ChatRoom) => ({
+                        ...room,
+                        itemImage: undefined,
+                        lastMessage: undefined,
+                        lastMessageTime: undefined,
+                    }),
+                );
+
+                const fullRooms = await loadRoomDetails(baseRooms);
+
+                if (!cancelled) {
+                    setChatRooms(fullRooms);
                 }
             } catch (error) {
                 console.error('채팅방 목록 조회 실패:', error);
             }
         };
 
-        fetchChatRooms();
-    }, [user]);
+        fetchRooms();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [user?.username]);
+
     return (
         <div>
             <div className="space-y-3">
@@ -52,17 +103,21 @@ export default function MyChattingList() {
                             setIsModalOpen(true);
                         }}
                     >
-                        <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                            <span className="text-orange-500 font-bold">
-                                {room.opponentName}
-                            </span>
-                        </div>
+                        <Image
+                            src={room.itemImage ?? sampleImage}
+                            alt="채팅 아이템 이미지"
+                            width={48}
+                            height={48}
+                            unoptimized
+                            className="w-12 h-12 rounded-lg object-cover"
+                        />
 
                         <div className="flex-1">
                             <div className="flex justify-between items-center">
                                 <p className="font-semibold">
-                                    {room.opponentName}
+                                    {room.opponent_username}
                                 </p>
+
                                 {room.lastMessageTime && (
                                     <span className="text-xs text-gray-400">
                                         {new Date(
@@ -76,14 +131,6 @@ export default function MyChattingList() {
                                 {room.lastMessage ?? '메시지가 없습니다.'}
                             </p>
                         </div>
-
-                        {room.unreadCount > 0 && (
-                            <div className="w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center">
-                                <span className="text-xs text-white">
-                                    {room.unreadCount}
-                                </span>
-                            </div>
-                        )}
                     </div>
                 ))}
             </div>

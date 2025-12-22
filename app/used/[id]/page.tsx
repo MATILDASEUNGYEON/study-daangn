@@ -85,6 +85,7 @@ export default function UsedDetailPage({ params }: Props) {
 
         updateToReserved();
     }, [lastRoomId]);
+
     useEffect(() => {
         if (lastRoomId && !isChatOpen) {
             setActiveRoomId(lastRoomId);
@@ -159,6 +160,7 @@ export default function UsedDetailPage({ params }: Props) {
             setIsLikeLoading(false);
         }
     };
+
     const handleSendMessage = (msg: string) => {
         if (!msg.trim()) return;
         if (!user?.user_id) {
@@ -178,12 +180,14 @@ export default function UsedDetailPage({ params }: Props) {
         console.log('전송 메시지:', chatPayload);
         sendMessage(chatPayload);
     };
+
     useEffect(() => {
         if (lastRoomId && !isChatOpen) {
             setActiveRoomId(lastRoomId);
             setIsChatOpen(true);
         }
     }, [lastRoomId]);
+
     useEffect(() => {
         const fetchItem = async () => {
             try {
@@ -385,105 +389,9 @@ export default function UsedDetailPage({ params }: Props) {
                                     {likeCount}
                                 </p>
                             </div>
-                            {/* <p>•</p>
-                        <div className="flex gap-1">
-                            <p className="text-xs text-gray-300 ">조회</p>
-                            <p className="text-xs text-gray-400 ">{item.item_views_count || 0}</p>
-                        </div> */}
                         </div>
-                        {/* <div className="flex items-center gap-3 mt-6"> */}
-                        {/* <Button 
-                            size="lg" 
-                            variant="ghost" 
-                            className="mt-6 w-7/8 bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50"
-                            onClick={async () => {
-                                if (!user?.user_id) {
-                                    alert('로그인이 필요합니다.');
-                                    router.push('/login');
-                                    return;
-                                }
-                                if (item?.item_status_id === ITEM_STATUS.RESERVED) {
-                                    alert('이미 예약중인 상품입니다.');
-                                    return;
-                                }
-                                if (item?.item_status_id === ITEM_STATUS.SOLD) {
-                                    alert('이미 판매완료된 상품입니다.');
-                                    return;
-                                }
-                                
-                                setIsReserving(true);
-                                try {
-                                    const response = await fetch(`/api/buy-sell/${id}/status`, {
-                                        method: 'PATCH',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({ status: ITEM_STATUS.RESERVED }),
-                                    });
-                                    
-                                    if (response.ok) {
-                                        alert('예약이 완료되었습니다!');
-                                        setItem(prev => prev ? { ...prev, item_status_id: ITEM_STATUS.RESERVED } : null);
-                                    } else {
-                                        const data = await response.json();
-                                        alert(data.error || '예약 처리에 실패했습니다.');
-                                    }
-                                } catch (error) {
-                                    console.error('예약 처리 오류:', error);
-                                    alert('예약 처리 중 오류가 발생했습니다.');
-                                } finally {
-                                    setIsReserving(false);
-                                }
-                            }}
-                            disabled={isReserving || item?.item_status_id !== ITEM_STATUS.SELLING}
-                        > 
-                            {isReserving ? '처리중...' : item?.item_status_id === ITEM_STATUS.SELLING ? '구매하고싶어요!' : ITEM_STATUS_LABEL[item?.item_status_id as ItemStatusType]} 
-                        </Button> */}
+
                         <div className="flex items-center gap-3 mt-6">
-                            {/* <form
-                            className="flex items-center gap-2 flex-1"
-                            onSubmit={(e) => {
-                              e.preventDefault();
-                              if (!message.trim()) return;
-                              handleSendMessage(message);
-                              setMessage('');
-                            }}
-                          >
-                            <Input
-                              type="text"
-                              name="message"
-                              placeholder="판매자에게 메시지를 보내보세요!"
-                              className="h-11 px-4 text-base flex-1"
-                              value={message}
-                              onChange={(e) => setMessage(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' && !e.shiftKey) {
-                                  e.preventDefault();
-                                  if (!message.trim()) return;
-                                  handleSendMessage(message);
-                                  setMessage('');
-                                }
-                              }}
-                            />
-                            <Button
-                              type="submit"
-                              size="icon"
-                              variant="ghost"
-                              className="h-11 w-11 disabled:opacity-40"
-                              disabled={!message.trim()}
-                              aria-label="메시지 전송"
-                            >
-                              <Image src={SearchIcon} alt="send" width={35} height={35} />
-                            </Button>
-                          </form>
-                            {isChatOpen && activeRoomId && (
-                          <ChattingModal
-                            isOpen={isChatOpen}
-                            onClose={() => setIsChatOpen(false)}
-                            roomId={activeRoomId}
-                            title={item?.item_title}
-                          />
-                        )}                                 */}
                             {!isSold ? (
                                 <form
                                     className="flex items-center gap-2 flex-1"
@@ -515,7 +423,6 @@ export default function UsedDetailPage({ params }: Props) {
                                     </Button>
                                 </form>
                             ) : (
-                                /* ⭐ SOLD 상태 */
                                 <Button
                                     size="lg"
                                     className="bg-gray-400 text-white cursor-default"

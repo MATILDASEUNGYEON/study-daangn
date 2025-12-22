@@ -1,4 +1,7 @@
-import { getMessages, sendMessage } from '@/lib/services/chat.service';
+import {
+    getMessages,
+    sendMessageWithReadUpdate,
+} from '@/lib/services/chat.service';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
@@ -40,7 +43,11 @@ export async function POST(
                 { status: 400 },
             );
         }
-        const newMessage = await sendMessage(room_id, sender_id, content);
+        const newMessage = await sendMessageWithReadUpdate(
+            room_id,
+            sender_id,
+            content,
+        );
         return NextResponse.json({ data: newMessage }, { status: 201 });
     } catch (error) {
         console.error('메시지 전송 오류:', error);

@@ -10,7 +10,9 @@ import {
     createChatroom,
     registerUserToChatroom,
     registerSellerToChatroom,
-    sendMessage,
+    // sendMessage,
+    getCheckChatroom,
+    sendMessageWithReadUpdate,
 } from '@/lib/services/chat.service';
 
 const wss = new WebSocketServer({ port: 8080 });
@@ -29,23 +31,26 @@ wss.on('connection', (ws) => {
         }
 
         if (message.type === 'CHAT') {
-            const { room_id, sender_id, content, item_id } = message;
-            console.log('🧩 parsed:', {
-                room_id,
-                sender_id,
-                content,
-                item_id,
-            });
+            const { sender_id, content, item_id } = message;
+
             try {
-                let targetRoomId = room_id;
+                if (!item_id) {
+                    throw new Error('item_id is required to send chat message');
+                }
 
-                if (!targetRoomId) {
-                    if (!item_id) {
-                        throw new Error(
-                            'item_id is required to create chatroom',
-                        );
-                    }
+                let targetRoomId: number;
 
+                // 1️⃣ 기존 채팅방 존재 여부 확인
+                const existingChatroom = await getCheckChatroom(
+                    sender_id,
+                    item_id,
+                );
+
+                if (existingChatroom) {
+                    // ✅ 이미 존재 → 재사용
+                    targetRoomId = existingChatroom.room_id;
+                } else {
+                    // 2️⃣ 없으면 새로 생성
                     const chatroom = await createChatroom(item_id);
                     targetRoomId = chatroom.room_id;
 
@@ -53,8 +58,8 @@ wss.on('connection', (ws) => {
                     await registerSellerToChatroom(targetRoomId, item_id);
                 }
 
-                // ✅ 2️⃣ 메시지 저장
-                const saved = await sendMessage(
+                // 3️⃣ 메시지 저장
+                const saved = await sendMessageWithReadUpdate(
                     targetRoomId,
                     sender_id,
                     content,
@@ -69,6 +74,7 @@ wss.on('connection', (ws) => {
                     created_at: saved.created_at,
                 };
 
+                // 4️⃣ 브로드캐스트
                 clients.forEach((client) => {
                     if (client.readyState === ws.OPEN) {
                         client.send(JSON.stringify(outgoingMessage));

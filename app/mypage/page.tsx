@@ -32,7 +32,7 @@ export default function MyPage() {
             if (!user?.username) return;
 
             try {
-                console.log('Fetching counts for user:', user.username);
+                console.log('mypage _ username:', user.username);
                 const usedResponse = await fetch(
                     `/api/buy-sell/myitems?username=${user.username}`,
                 );

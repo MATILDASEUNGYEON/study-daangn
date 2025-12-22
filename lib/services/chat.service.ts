@@ -4,7 +4,6 @@ import {
     ChatMessageDTO,
 } from '@/types/chat.types';
 import { pool } from '@/config/database';
-console.log('DB PASSWORD:', process.env.DB_PASSWORD);
 export const getCheckChatroom = async (
     user_id: number,
     item_id: number,
@@ -77,21 +76,70 @@ export const getMessages = async (
     return result.rows;
 };
 
-export const sendMessage = async (
+// export const sendMessage = async (
+//     room_id: number,
+//     sender_id: number,
+//     content: string,
+// ): Promise<{ message_id: number; created_at: string }> => {
+//     const result = await pool.query(
+//         `INSERT INTO chat_messages (room_id, sender_id, content)
+//         VALUES ($1, $2, $3)
+//         RETURNING message_id, created_at`,
+//         [room_id, sender_id, content],
+//     );
+//     if (result.rows.length === 0) {
+//         throw new Error('메시지 전송에 실패했습니다.');
+//     }
+//     return result.rows[0];
+// };
+
+export const sendMessageWithReadUpdate = async (
     room_id: number,
     sender_id: number,
     content: string,
 ): Promise<{ message_id: number; created_at: string }> => {
-    const result = await pool.query(
-        `INSERT INTO chat_messages (room_id, sender_id, content)
-        VALUES ($1, $2, $3)
-        RETURNING message_id, created_at`,
-        [room_id, sender_id, content],
-    );
-    if (result.rows.length === 0) {
-        throw new Error('메시지 전송에 실패했습니다.');
+    const client = await pool.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        const messageResult = await client.query(
+            `
+            INSERT INTO chat_messages (room_id, sender_id, content)
+            VALUES ($1, $2, $3)
+            RETURNING message_id, created_at
+            `,
+            [room_id, sender_id, content],
+        );
+
+        if (messageResult.rows.length === 0) {
+            throw new Error('메시지 생성 실패');
+        }
+
+        const { message_id, created_at } = messageResult.rows[0];
+        console.log('Inserted message:', messageResult.rows[0]);
+        await client.query(
+            `
+            UPDATE chat_room_users
+            SET last_read_message_id = $1
+            WHERE room_id = $2 AND user_id = $3
+            `,
+            [message_id, room_id, sender_id],
+        );
+        console.log(
+            'Updated last_read_message_id for user:',
+            sender_id,
+            message_id,
+        );
+        await client.query('COMMIT');
+
+        return { message_id, created_at };
+    } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+    } finally {
+        client.release();
     }
-    return result.rows[0];
 };
 
 export const registerUserToChatroom = async (
@@ -126,10 +174,24 @@ export const registerSellerToChatroom = async (
 };
 
 export const getChatroomByUsers = async (
-    user_id: number,
+    user_id: string,
 ): Promise<ChatroomListDTO[]> => {
     const result = await pool.query(
-        `SELECT * from chat_room_users WHERE user_id = $1`,
+        `SELECT
+            cr.room_id,
+            u.user_id AS opponent_id,
+            u.username AS opponent_username
+        FROM chat_rooms cr
+        JOIN chat_room_users cru_me
+            ON cr.room_id = cru_me.room_id
+        JOIN users me
+            ON me.user_id = cru_me.user_id
+        JOIN chat_room_users cru_other
+            ON cr.room_id = cru_other.room_id
+        AND cru_other.user_id != cru_me.user_id
+        JOIN users u
+            ON u.user_id = cru_other.user_id
+        WHERE me.username = $1`,
         [user_id],
     );
     if (result.rows.length === 0) {
@@ -137,6 +199,7 @@ export const getChatroomByUsers = async (
     }
     return result.rows;
 };
+
 export const getUserChatroomCount = async (
     user_id: number,
 ): Promise<number> => {
@@ -150,4 +213,42 @@ export const getUserChatroomCount = async (
     );
 
     return Number(result.rows[0].count);
+};
+export const getItemInfoByRoomId = async (
+    room_id: number,
+): Promise<{ item_id: number } | null> => {
+    const result = await pool.query(
+        `SELECT
+    i.item_id,
+    i.item_images
+FROM chat_rooms cr
+JOIN items i
+    ON i.item_id = cr.item_id
+WHERE cr.room_id = $1;`,
+        [room_id],
+    );
+    if (result.rows.length === 0) {
+        return null;
+    }
+    return result.rows[0];
+};
+
+export const getLastMessageByRoomId = async (
+    room_id: number,
+): Promise<ChatMessageDTO | null> => {
+    const result = await pool.query(
+        `SELECT
+    message_id,
+    content,
+    created_at
+FROM chat_messages
+WHERE room_id = $1
+ORDER BY created_at DESC
+LIMIT 1;`,
+        [room_id],
+    );
+    if (result.rows.length === 0) {
+        return null;
+    }
+    return result.rows[0];
 };

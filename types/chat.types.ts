@@ -23,9 +23,12 @@ export interface ChatMessageDTO {
 }
 export interface ChatRoom {
     room_id: number;
-    item_id: number;
-    opponentName: string;
-    lastMessage?: string | null;
-    lastMessageTime?: string | null;
-    unreadCount: number;
+    opponent_id: number;
+    opponent_username: string;
+
+    // 아래는 추가 로딩
+    itemImage?: string;
+    lastMessage?: string;
+    lastMessageTime?: string;
+    unreadCount?: number;
 }

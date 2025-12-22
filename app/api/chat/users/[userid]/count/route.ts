@@ -3,9 +3,10 @@ import { getUserChatroomCount } from '@/lib/services/chat.service';
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { userid: string } },
+    { params }: { params: Promise<{ userid: string }> },
 ) {
-    const user_id = Number(params.userid);
+    const { userid } = await params;
+    const user_id = Number(userid);
     console.log('Received request for chatroom count of user_id:', user_id);
 
     if (Number.isNaN(user_id)) {

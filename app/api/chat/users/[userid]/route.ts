@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getChatroomByUsers } from '@/lib/services/chat.service';
-import { getIdByUser } from '@/lib/services/auth.service';
+// import { getIdByUser } from '@/lib/services/auth.service';
 
 export async function GET(
     req: NextRequest,
@@ -9,18 +9,8 @@ export async function GET(
     try {
         const { userid } = await params;
 
-        const userId = await getIdByUser(userid);
-        console.log('Resolved userId:', userId);
-
-        if (typeof userId !== 'number') {
-            return NextResponse.json(
-                { error: '존재하지 않는 사용자입니다.' },
-                { status: 404 },
-            );
-        }
-
-        const chatrooms = await getChatroomByUsers(userId);
-        console.log('Fetched chatrooms:', chatrooms);
+        const chatrooms = await getChatroomByUsers(userid);
+        console.log('Fetched chatrooms _ latest:', chatrooms);
 
         return NextResponse.json({ data: chatrooms }, { status: 200 });
     } catch (error) {
