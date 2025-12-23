@@ -18,7 +18,9 @@ export default function MyChattingList() {
                 try {
                     const [itemRes, lastMsgRes] = await Promise.all([
                         fetch(`/api/chat/rooms/${room.room_id}/item`),
-                        fetch(`/api/chat/rooms/${room.room_id}/lastmessage`),
+                        fetch(
+                            `/api/chat/rooms/${room.room_id}/lastmessage?user_id=${user?.user_id ?? ''}`,
+                        ),
                     ]);
 
                     const itemJson = itemRes.ok ? await itemRes.json() : null;
@@ -32,6 +34,7 @@ export default function MyChattingList() {
                         itemImage: itemJson?.data?.item_images?.[0] ?? null,
                         lastMessage: msgJson?.data?.content ?? null,
                         lastMessageTime: msgJson?.data?.created_at ?? null,
+                        hasUnread: msgJson?.data?.has_unread ?? false,
                     };
                 } catch (err) {
                     console.error(
@@ -45,7 +48,13 @@ export default function MyChattingList() {
 
         return updatedRooms;
     };
-
+    const markRoomAsReadLocal = (roomId: number) => {
+        setChatRooms((prev) =>
+            prev.map((room) =>
+                room.room_id === roomId ? { ...room, hasUnread: false } : room,
+            ),
+        );
+    };
     useEffect(() => {
         if (!user?.username) return;
 
@@ -119,15 +128,20 @@ export default function MyChattingList() {
                                     {room.opponent_username}
                                 </p>
 
-                                {room.lastMessageTime && (
-                                    <span className="text-xs text-gray-400">
-                                        {new Date(
-                                            room.lastMessageTime,
-                                        ).toLocaleString()}
-                                    </span>
-                                )}
-                            </div>
+                                <div className="flex items-center gap-2">
+                                    {room.hasUnread && (
+                                        <span className="w-2 h-2 bg-red-500 rounded-full" />
+                                    )}
 
+                                    {room.lastMessageTime && (
+                                        <span className="text-xs text-gray-400">
+                                            {new Date(
+                                                room.lastMessageTime,
+                                            ).toLocaleString()}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
                             <p className="text-sm text-gray-500 truncate">
                                 {room.lastMessage ?? '메시지가 없습니다.'}
                             </p>
@@ -140,12 +154,12 @@ export default function MyChattingList() {
                 <ChattingModal
                     isOpen={isModalOpen}
                     onClose={() => {
+                        markRoomAsReadLocal(selectedRoom.room_id);
                         setIsModalOpen(false);
                         setSelectedRoom(null);
                     }}
                     roomId={selectedRoom.room_id}
-                    itemId={selectedRoom.itemId ?? null} // ✅ 추가
-                    title="채팅"
+                    itemId={selectedRoom.itemId ?? null}
                 />
             )}
         </div>

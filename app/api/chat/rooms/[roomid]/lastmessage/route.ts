@@ -1,4 +1,4 @@
-import { getLastMessageByRoomId } from '@/lib/services/chat.service';
+import { getLastMessageWithUnreadByRoomId } from '@/lib/services/chat.service';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
@@ -7,14 +7,20 @@ export async function GET(
 ) {
     const { roomid } = await params;
     const room_id = Number(roomid);
-    if (isNaN(room_id)) {
+    const { searchParams } = new URL(req.url);
+    const user_id = Number(searchParams.get('user_id'));
+
+    if (isNaN(room_id) || isNaN(user_id)) {
         return NextResponse.json(
-            { error: '유효한 room_id가 필요합니다.' },
+            { error: '유효한 room_id와 user_id가 필요합니다.' },
             { status: 400 },
         );
     }
     try {
-        const lastMessage = await getLastMessageByRoomId(room_id);
+        const lastMessage = await getLastMessageWithUnreadByRoomId(
+            room_id,
+            user_id,
+        );
         console.log('마지막 메시지 조회 성공:', lastMessage);
         return NextResponse.json({
             data: {

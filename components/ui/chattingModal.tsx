@@ -38,8 +38,21 @@ export function ChattingModal({
     const [messages, setMessages] = React.useState<Message[]>([]);
     const [inputValue, setInputValue] = React.useState('');
     const messagesEndRef = React.useRef<HTMLDivElement>(null);
+    const hasMarkedReadRef = React.useRef(false);
 
-    // 📌 기존 메시지 조회
+    React.useEffect(() => {
+        if (!isOpen || !roomId || !user?.user_id) return;
+
+        fetch(`/api/chat/rooms/${roomId}/read`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: user.user_id,
+            }),
+        });
+    }, [isOpen, roomId, user?.user_id]);
     React.useEffect(() => {
         if (!isOpen || !roomId) return;
 
@@ -47,16 +60,32 @@ export function ChattingModal({
             try {
                 const res = await fetch(`/api/chat/rooms/${roomId}/messages`);
                 const result = await res.json();
-                if (res.ok) setMessages(result.data);
+
+                if (res.ok) {
+                    setMessages(result.data);
+
+                    if (user?.user_id && !hasMarkedReadRef.current) {
+                        hasMarkedReadRef.current = true;
+
+                        fetch(`/api/chat/rooms/${roomId}/read`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                user_id: user.user_id,
+                            }),
+                        });
+                    }
+                }
             } catch (err) {
                 console.error('메시지 조회 실패:', err);
             }
         };
 
         fetchMessages();
-    }, [isOpen, roomId]);
+    }, [isOpen, roomId, user?.user_id]);
 
-    // 📌 웹소켓 메시지 반영
     React.useEffect(() => {
         const latest = wsMessages.at(-1);
         if (!latest || latest.room_id !== roomId) return;
@@ -66,14 +95,29 @@ export function ChattingModal({
             if (exists) return prev;
             return [...prev, latest];
         });
-    }, [wsMessages, roomId]);
 
-    // 📌 스크롤 자동 이동
+        if (isOpen && user?.user_id) {
+            fetch(`/api/chat/rooms/${roomId}/read`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: user.user_id,
+                }),
+            });
+        }
+    }, [wsMessages, roomId, isOpen, user?.user_id]);
+    React.useEffect(() => {
+        if (!isOpen) {
+            hasMarkedReadRef.current = false;
+        }
+    }, [isOpen]);
+
     React.useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    // ✅ item_id 포함해서 메시지 전송
     const handleSendMessage = () => {
         if (!inputValue.trim()) return;
         if (!user?.user_id) return;
@@ -88,7 +132,7 @@ export function ChattingModal({
         sendMessage({
             type: 'CHAT',
             room_id: roomId,
-            item_id: itemId, // ⭐ 핵심
+            item_id: itemId,
             sender_id: user.user_id,
             content: inputValue,
         });

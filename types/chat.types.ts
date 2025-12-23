@@ -32,4 +32,5 @@ export interface ChatRoom {
     lastMessage?: string;
     lastMessageTime?: string;
     unreadCount?: number;
+    hasUnread?: boolean;
 }
