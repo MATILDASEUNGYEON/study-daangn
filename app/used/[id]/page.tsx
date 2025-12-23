@@ -437,6 +437,7 @@ export default function UsedDetailPage({ params }: Props) {
                                     isOpen={isChatOpen}
                                     onClose={() => setIsChatOpen(false)}
                                     roomId={activeRoomId}
+                                    itemId={item.item_id}
                                     title={item.item_title}
                                 />
                             )}

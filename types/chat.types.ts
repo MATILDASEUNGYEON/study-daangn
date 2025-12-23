@@ -27,6 +27,7 @@ export interface ChatRoom {
     opponent_username: string;
 
     // 아래는 추가 로딩
+    itemId?: number;
     itemImage?: string;
     lastMessage?: string;
     lastMessageTime?: string;

@@ -10,7 +10,7 @@ export default function MyChattingList() {
     const user = useSelector((state: RootState) => state.auth.user);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
-    const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
+    const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
 
     const loadRoomDetails = async (rooms: ChatRoom[]) => {
         const updatedRooms = await Promise.all(
@@ -28,6 +28,7 @@ export default function MyChattingList() {
 
                     return {
                         ...room,
+                        itemId: itemJson?.data?.item_id ?? null,
                         itemImage: itemJson?.data?.item_images?.[0] ?? null,
                         lastMessage: msgJson?.data?.content ?? null,
                         lastMessageTime: msgJson?.data?.created_at ?? null,
@@ -99,7 +100,7 @@ export default function MyChattingList() {
                         key={room.room_id}
                         className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
                         onClick={() => {
-                            setSelectedRoomId(room.room_id);
+                            setSelectedRoom(room);
                             setIsModalOpen(true);
                         }}
                     >
@@ -135,14 +136,15 @@ export default function MyChattingList() {
                 ))}
             </div>
 
-            {selectedRoomId && (
+            {selectedRoom && (
                 <ChattingModal
                     isOpen={isModalOpen}
                     onClose={() => {
                         setIsModalOpen(false);
-                        setSelectedRoomId(null);
+                        setSelectedRoom(null);
                     }}
-                    roomId={selectedRoomId}
+                    roomId={selectedRoom.room_id}
+                    itemId={selectedRoom.itemId ?? null} // ✅ 추가
                     title="채팅"
                 />
             )}

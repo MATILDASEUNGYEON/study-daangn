@@ -19,6 +19,7 @@ interface ChattingModalProps {
     isOpen: boolean;
     onClose: () => void;
     roomId: number;
+    itemId: number | null;
     title?: string;
 }
 
@@ -26,6 +27,7 @@ export function ChattingModal({
     isOpen,
     onClose,
     roomId,
+    itemId,
     title = '채팅',
 }: ChattingModalProps) {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -37,6 +39,7 @@ export function ChattingModal({
     const [inputValue, setInputValue] = React.useState('');
     const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
+    // 📌 기존 메시지 조회
     React.useEffect(() => {
         if (!isOpen || !roomId) return;
 
@@ -53,6 +56,7 @@ export function ChattingModal({
         fetchMessages();
     }, [isOpen, roomId]);
 
+    // 📌 웹소켓 메시지 반영
     React.useEffect(() => {
         const latest = wsMessages.at(-1);
         if (!latest || latest.room_id !== roomId) return;
@@ -64,16 +68,27 @@ export function ChattingModal({
         });
     }, [wsMessages, roomId]);
 
+    // 📌 스크롤 자동 이동
     React.useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    // ✅ item_id 포함해서 메시지 전송
     const handleSendMessage = () => {
-        if (!inputValue.trim() || !user?.user_id) return;
+        if (!inputValue.trim()) return;
+        if (!user?.user_id) return;
+
+        if (!itemId) {
+            console.error('❌ itemId가 없어 메시지를 보낼 수 없습니다.', {
+                roomId,
+            });
+            return;
+        }
 
         sendMessage({
             type: 'CHAT',
             room_id: roomId,
+            item_id: itemId, // ⭐ 핵심
             sender_id: user.user_id,
             content: inputValue,
         });
