@@ -2,7 +2,9 @@ import { ItemInfo, UpdateDTO } from '@/types/item.types';
 import { pool } from '@/config/database';
 
 export const getItemlist = async (): Promise<ItemInfo[]> => {
-    const result = await pool.query(`SELECT * FROM items`);
+    const result = await pool.query(
+        `SELECT * FROM items WHERE deleted_at IS NULL ORDER BY item_date DESC`,
+    );
     if (result.rows.length === 0) {
         throw new Error('아이템 조회에 실패했습니다.');
     }
@@ -25,7 +27,7 @@ export const getItemBySellerId = async (
     seller_id: string,
 ): Promise<ItemInfo[]> => {
     const result = await pool.query(
-        `SELECT * FROM items WHERE seller_id = $1`,
+        `SELECT * FROM items WHERE seller_id = $1 AND deleted_at IS NULL`,
         [seller_id],
     );
     if (result.rows.length === 0) {
@@ -40,7 +42,7 @@ export const getItemsByUsername = async (
     const result = await pool.query(
         `SELECT i.* FROM items i
          INNER JOIN users u ON i.seller_id = u.user_id
-         WHERE u.username = $1
+         WHERE u.username = $1 AND i.deleted_at IS NULL
          ORDER BY i.item_date DESC`,
         [username],
     );
@@ -61,14 +63,31 @@ export const updateItemStatus = async (
     return result.rows[0];
 };
 
+// export const deleteItem = async (item_id: number): Promise<boolean> => {
+//     const result = await pool.query(`DELETE FROM items WHERE item_id = $1`, [
+//         item_id,
+//     ]);
+//     if (result.rowCount === 0) {
+//         throw new Error('아이템 삭제에 실패했습니다.');
+//     }
+//     return result.rows[0];
+// };
+
 export const deleteItem = async (item_id: number): Promise<boolean> => {
-    const result = await pool.query(`DELETE FROM items WHERE item_id = $1`, [
-        item_id,
-    ]);
+    const result = await pool.query(
+        `
+    UPDATE items
+    SET deleted_at = NOW()
+    WHERE item_id = $1
+      AND deleted_at IS NULL
+    `,
+        [item_id],
+    );
     if (result.rowCount === 0) {
         throw new Error('아이템 삭제에 실패했습니다.');
     }
-    return result.rows[0];
+
+    return (result.rowCount ?? 0) > 0;
 };
 
 export const updateItem = async (

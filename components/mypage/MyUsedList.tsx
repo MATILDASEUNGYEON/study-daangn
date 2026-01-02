@@ -12,6 +12,7 @@ import {
 import { toPriceFormat, getTimeAgo } from '@/utils/format';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import TrashIcon from '@/assets/svgs/DeleteIcon';
 
 export default function MyUsedList() {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -87,6 +88,30 @@ export default function MyUsedList() {
             confirm('예약을 취소하시겠습니까? 상태가 "판매중"으로 변경됩니다.')
         ) {
             await handleStatusChange(itemId, ITEM_STATUS.SELLING);
+        }
+    };
+
+    const handleDelete = async (itemId: number) => {
+        if (!confirm('정말 이 상품을 삭제하시겠습니까?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/buy-sell/${itemId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                setItems((prev) =>
+                    prev.filter((item) => item.item_id !== itemId),
+                );
+                alert('상품이 삭제되었습니다.');
+            } else {
+                const result = await response.json();
+                alert(result.error || '삭제에 실패했습니다.');
+            }
+        } catch {
+            alert('삭제 중 오류가 발생했습니다.');
         }
     };
 
@@ -186,13 +211,22 @@ export default function MyUsedList() {
                         </div>
 
                         <div className="flex flex-col items-end gap-2">
-                            <span
-                                className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeColor(item.item_status_id)}`}
-                            >
-                                {ITEM_STATUS_LABEL[
-                                    item.item_status_id as ItemStatusType
-                                ] || '알 수 없음'}
-                            </span>
+                            <div className="flex items-center gap-2">
+                                <span
+                                    className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeColor(item.item_status_id)}`}
+                                >
+                                    {ITEM_STATUS_LABEL[
+                                        item.item_status_id as ItemStatusType
+                                    ] || '알 수 없음'}
+                                </span>
+                                <button
+                                    onClick={() => handleDelete(item.item_id)}
+                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                    title="삭제"
+                                >
+                                    <TrashIcon className="w-5 h-5 text-gray-600 hover:text-red-500" />
+                                </button>
+                            </div>
 
                             {item.item_status_id === ITEM_STATUS.RESERVED ? (
                                 <div className="flex gap-2">
