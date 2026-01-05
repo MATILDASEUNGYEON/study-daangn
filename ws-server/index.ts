@@ -42,10 +42,8 @@ wss.on('connection', (ws) => {
                 );
 
                 if (existingChatroom) {
-                   
                     targetRoomId = existingChatroom.room_id;
                 } else {
-                   
                     const chatroom = await createChatroom(item_id);
                     targetRoomId = chatroom.room_id;
 
