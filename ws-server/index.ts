@@ -1,19 +1,15 @@
 import dotenv from 'dotenv';
-import path from 'path';
 
-dotenv.config({
-    path: path.resolve(__dirname, '../.env'),
-});
+dotenv.config();
 
 import { WebSocketServer } from 'ws';
 import {
     createChatroom,
     registerUserToChatroom,
     registerSellerToChatroom,
-    // sendMessage,
     getCheckChatroom,
     sendMessageWithReadUpdate,
-} from '@/lib/services/chat.service';
+} from './services/chat.service';
 
 const wss = new WebSocketServer({ port: 8080 });
 
@@ -40,17 +36,16 @@ wss.on('connection', (ws) => {
 
                 let targetRoomId: number;
 
-                // 1️⃣ 기존 채팅방 존재 여부 확인
                 const existingChatroom = await getCheckChatroom(
                     sender_id,
                     item_id,
                 );
 
                 if (existingChatroom) {
-                    // ✅ 이미 존재 → 재사용
+                   
                     targetRoomId = existingChatroom.room_id;
                 } else {
-                    // 2️⃣ 없으면 새로 생성
+                   
                     const chatroom = await createChatroom(item_id);
                     targetRoomId = chatroom.room_id;
 
@@ -58,7 +53,6 @@ wss.on('connection', (ws) => {
                     await registerSellerToChatroom(targetRoomId, item_id);
                 }
 
-                // 3️⃣ 메시지 저장
                 const saved = await sendMessageWithReadUpdate(
                     targetRoomId,
                     sender_id,

@@ -6,10 +6,11 @@ import {
 
 export async function POST(
     req: NextRequest,
-    { params }: { params: { roomid: string } },
+    { params }: { params: Promise<{ roomid: string }> },
 ) {
     try {
-        const room_id = Number(params.roomid);
+        const { roomid } = await params;
+        const room_id = Number(roomid);
         if (isNaN(room_id)) {
             return NextResponse.json(
                 { message: '유효하지 않은 room_id 입니다.' },

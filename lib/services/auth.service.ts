@@ -35,8 +35,8 @@ export const createUser = async (
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     const result = await pool.query(
-        `INSERT INTO users (username, password, email, address_main, address_dong,temperature)
-            VALUES ($1, $2, $3, $4, NOW(), 36.5)
+        `INSERT INTO users (username, password, email, address_main, address_dong,created_at,temperature)
+            VALUES ($1, $2, $3, $4, $5, NOW(),36.5)
             RETURNING user_id,username, email, address_main, address_dong, created_at, last_login`,
         [
             username,

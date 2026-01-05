@@ -1,0 +1,116 @@
+services:
+    # PostgreSQL Database
+    postgres:
+        image: postgres:16-alpine
+        container_name: daangn-db
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: daangn
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: qhdksdlswmd3#
+        ports:
+            - '5432:5432'
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+            - ./docker/db/init:/docker-entrypoint-initdb.d
+        networks:
+            - daangn-network
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U postgres']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    # MinIO Object Storage
+    minio:
+        image: minio/minio:latest
+        container_name: daangn-minio
+        restart: unless-stopped
+        command: server /data --console-address ":9001"
+        environment:
+            MINIO_ROOT_USER: minioadmin
+            MINIO_ROOT_PASSWORD: minioadmin
+        ports:
+            - '9000:9000'
+            - '9001:9001'
+        volumes:
+            - minio_data:/data
+        networks:
+            - daangn-network
+        healthcheck:
+            test:
+                ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+            interval: 30s
+            timeout: 20s
+            retries: 3
+
+    # Next.js Application
+    app:
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        container_name: daangn-app
+        restart: unless-stopped
+        environment:
+            # Database
+            DB_HOST: postgres
+            DB_PORT: 5432
+            DB_NAME: daangn
+            DB_USER: postgres
+            DB_PASSWORD: qhdksdlswmd3#
+
+            # MinIO
+            MINIO_ENDPOINT: minio
+            MINIO_PORT: 9000
+            MINIO_ACCESS_KEY: minioadmin
+            MINIO_SECRET_KEY: minioadmin
+            MINIO_BUCKET: images
+            NEXT_PUBLIC_MINIO_URL: http://localhost:9003/browser/images
+
+            # JWT
+            JWT_SECRET: 3bf82fbf2a8037f383be8eb20185af7e0ff192c57344b73003a2bd3b98fb2397047f19671897b27bfa7c5416aaa95f64b39ee6da81ace0239b42e5a4696fcf09
+            JWT_EXPIRES_IN: 7d
+            JWT_ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef
+
+            NODE_ENV: production
+        ports:
+            - '3000:3000'
+        depends_on:
+            postgres:
+                condition: service_healthy
+            minio:
+                condition: service_healthy
+        networks:
+            - daangn-network
+
+    # WebSocket Server
+    ws-server:
+        build:
+            context: ./ws-server
+            dockerfile: Dockerfile
+        container_name: daangn-ws
+        restart: unless-stopped
+        environment:
+            # Database
+            DB_HOST: postgres
+            DB_PORT: 5432
+            DB_NAME: daangn
+            DB_USER: postgres
+            DB_PASSWORD: qhdksdlswmd3#
+        ports:
+            - '8080:8080'
+        depends_on:
+            postgres:
+                condition: service_healthy
+        networks:
+            - daangn-network
+
+volumes:
+    postgres_data:
+        driver: local
+    minio_data:
+        driver: local
+
+networks:
+    daangn-network:
+        driver: bridge

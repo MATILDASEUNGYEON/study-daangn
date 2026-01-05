@@ -1,13 +1,19 @@
 export interface CreateUserDTO {
-    user_id: number;
     username: string;
     password: string;
+    email: string;
+    address_main?: string;
+    address_dong?: string;
+}
+
+export interface UserWithoutPassword {
+    user_id: number;
+    username: string;
     email: string;
     temperature: number;
     address_main?: string;
     address_dong?: string;
 }
-export type UserWithoutPassword = Omit<CreateUserDTO, 'password'>;
 export interface LoginDTO {
     id: string;
     password: string;

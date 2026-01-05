@@ -4,13 +4,13 @@ dotenv.config();
 
 const minioClient = new Client({
     endPoint: process.env.MINIO_ENDPOINT || 'localhost',
-    port: Number(process.env.MINIO_PORT) || 9000,
+    port: Number(process.env.MINIO_PORT) || 9003,
     useSSL: false,
     accessKey: process.env.MINIO_ACCESS_KEY || 'minioadmin',
     secretKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
 });
 
-const IMAGE_BUCKET = process.env.MINIO_BUCKET || 'images';
+const IMAGE_BUCKET = process.env.MINIO_BUCKET || 'browser/images';
 
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
