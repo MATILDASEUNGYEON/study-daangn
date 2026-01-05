@@ -41,6 +41,7 @@ import searchIcon from '@/assets/icons/searchIcon.png';
 import composeIcon from '@/assets/icons/composeIcon.png';
 import plusIcon from '@/assets/icons/plusIcon.png';
 import subfooter from '@/assets/images/subfooter.png';
+import sampleImage from '@/assets/images/sampleImage.png';
 
 export default function UsedPage() {
     const router = useRouter();
@@ -499,8 +500,7 @@ export default function UsedPage() {
                                 <Card
                                     key={item.item_id}
                                     image={
-                                        item.item_images?.[0] ||
-                                        `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`
+                                        item.item_images?.[0] || sampleImage.src
                                     }
                                     title={item.item_title}
                                     price={toPriceFormat(

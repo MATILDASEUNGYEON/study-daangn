@@ -65,7 +65,6 @@ services:
             MINIO_ACCESS_KEY: minioadmin
             MINIO_SECRET_KEY: minioadmin
             MINIO_BUCKET: images
-            NEXT_PUBLIC_MINIO_URL: ${NEXT_PUBLIC_MINIO_URL}
 
             # JWT
             JWT_SECRET: 3bf82fbf2a8037f383be8eb20185af7e0ff192c57344b73003a2bd3b98fb2397047f19671897b27bfa7c5416aaa95f64b39ee6da81ace0239b42e5a4696fcf09

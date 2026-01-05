@@ -476,8 +476,7 @@ export default function UsedDetailPage({ params }: Props) {
                         <CardAddLocation
                             key={sellerItem.item_id}
                             image={
-                                sellerItem.item_images?.[0] ||
-                                `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`
+                                sellerItem.item_images?.[0] || sampleImage.src
                             }
                             title={sellerItem.item_title}
                             price={`${toPriceFormat(String(sellerItem.item_price))} 원`}
@@ -509,10 +508,7 @@ export default function UsedDetailPage({ params }: Props) {
                     popularItems.map((popItem) => (
                         <CardAddLocation
                             key={popItem.item_id}
-                            image={
-                                popItem.item_images?.[0] ||
-                                `${process.env.NEXT_PUBLIC_MINIO_URL}/sampleImage.png`
-                            }
+                            image={popItem.item_images?.[0] || sampleImage.src}
                             title={popItem.item_title}
                             price={`${toPriceFormat(String(popItem.item_price))} 원`}
                             location={popItem.item_location}

@@ -9,9 +9,10 @@ import {
     useMapEvents,
 } from 'react-leaflet';
 import L from 'leaflet';
+import locationIcon from '../assets/icons/locationIcon_ember.png';
 
 const DefaultIcon = L.icon({
-    iconUrl: `${process.env.NEXT_PUBLIC_MINIO_URL}/icons/location_Icon_ember.png`,
+    iconUrl: locationIcon.src,
     iconSize: [40, 40],
     iconAnchor: [20, 40],
 });
