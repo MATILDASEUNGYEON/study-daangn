@@ -6,8 +6,8 @@ services:
         restart: unless-stopped
         environment:
             POSTGRES_DB: daangn
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: qhdksdlswmd3#
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
         ports:
             - '5432:5432'
         volumes:
@@ -56,8 +56,8 @@ services:
             DB_HOST: postgres
             DB_PORT: 5432
             DB_NAME: daangn
-            DB_USER: postgres
-            DB_PASSWORD: qhdksdlswmd3#
+            DB_USER: ${DB_USER}
+            DB_PASSWORD: ${DB_PASSWORD}
 
             # MinIO
             MINIO_ENDPOINT: minio
@@ -65,7 +65,7 @@ services:
             MINIO_ACCESS_KEY: minioadmin
             MINIO_SECRET_KEY: minioadmin
             MINIO_BUCKET: images
-            NEXT_PUBLIC_MINIO_URL: http://localhost:9003/browser/images
+            NEXT_PUBLIC_MINIO_URL: ${NEXT_PUBLIC_MINIO_URL}
 
             # JWT
             JWT_SECRET: 3bf82fbf2a8037f383be8eb20185af7e0ff192c57344b73003a2bd3b98fb2397047f19671897b27bfa7c5416aaa95f64b39ee6da81ace0239b42e5a4696fcf09
@@ -91,12 +91,11 @@ services:
         container_name: daangn-ws
         restart: unless-stopped
         environment:
-            # Database
             DB_HOST: postgres
             DB_PORT: 5432
             DB_NAME: daangn
-            DB_USER: postgres
-            DB_PASSWORD: qhdksdlswmd3#
+            DB_USER: ${DB_USER}
+            DB_PASSWORD: ${DB_PASSWORD}
         ports:
             - '8080:8080'
         depends_on:
